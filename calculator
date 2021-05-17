@@ -1,0 +1,25 @@
+#!/usr/bin/env php
+<?php
+
+require __DIR__.'/vendor/autoload.php';
+
+use CommissionTask\Service\CurrencyService;
+use CommissionTask\Service\MathCalculator;
+use CommissionTask\Service\UserBalanceStore;
+use Symfony\Component\Console\Application;
+use CommissionTask\Console\Command\CalculateCommission;
+use CommissionTask\Service\CsvImporter;
+use Symfony\Component\Dotenv\Dotenv;
+
+$dotenv = new Dotenv();
+$dotenv->load(__DIR__.'/.env');
+
+$application = new Application();
+$csvImporter = new CsvImporter;
+$currencyService = new CurrencyService();
+$userBalance = new UserBalanceStore();
+
+$mathCalculator = new MathCalculator($userBalance, $currencyService);
+$application->add(new CalculateCommission($csvImporter, $mathCalculator));
+
+$application->run();

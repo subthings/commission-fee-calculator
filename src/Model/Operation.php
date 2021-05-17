@@ -1,0 +1,69 @@
+<?php
+
+declare(strict_types=1);
+
+namespace CommissionTask\Model;
+
+class Operation
+{
+    public const PRIVATE_CLIENT = 'private';
+    public const BUSINESS_CLIENT = 'business';
+    public const USER_TYPES = [
+        self::PRIVATE_CLIENT => 0,
+        self::BUSINESS_CLIENT => 1,
+    ];
+
+    public const WITHDRAW_TYPE = 'withdraw';
+    public const DEPOSIT_TYPE = 'deposit';
+    public const OPERATION_TYPES = [
+        self::WITHDRAW_TYPE => 0,
+        self::DEPOSIT_TYPE => 1,
+    ];
+
+    private \DateTime $date;
+    private int $userId;
+    private int $userType;
+    private int $operationType;
+    private float $operationAmount;
+    private string $operationCurrency;
+
+    public function __construct(array $operationRow)
+    {
+        $this->date = new \DateTime($operationRow[0]);
+        $this->userId = (int) $operationRow[1];
+        $this->userType = (int) self::USER_TYPES[$operationRow[2]];
+        $this->operationType = (int) self::OPERATION_TYPES[$operationRow[3]];
+        $this->operationAmount = (float) $operationRow[4];
+        $this->operationCurrency = $operationRow[5];
+    }
+
+    public function getDate(): \DateTime
+    {
+        return $this->date;
+    }
+
+    public function getUserId(): int
+    {
+        return $this->userId;
+    }
+
+    public function getUserType(): int
+    {
+        return $this->userType;
+    }
+
+    public function getOperationType(): int
+    {
+        return $this->operationType;
+    }
+
+    public function getOperationAmount(): float
+    {
+        return $this->operationAmount;
+    }
+
+    public function getOperationCurrency(): string
+    {
+        return $this->operationCurrency;
+    }
+}
