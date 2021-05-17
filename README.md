@@ -1,7 +1,7 @@
 ## Commission fee calculator app
 
 # Requirements
-PHP >= 7.4
+PHP = 7.3.*
 
 # Installation
 - `composer i`

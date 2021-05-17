@@ -8,14 +8,17 @@ use CommissionTask\Model\Operation;
 
 class MathCalculator
 {
-    const DEPOSIT_FEE = 0.0003;
-    const WITHDRAW_PRIVATE_FEE = 0.003;
-    const WITHDRAW_BUSINESS_FEE = 0.005;
-    const WITHDRAW_PRIVATE_LIMIT = 1000;
-    const FREE_OPERATIONS = 3;
+    public const DEPOSIT_FEE = 0.0003;
+    public const WITHDRAW_PRIVATE_FEE = 0.003;
+    public const WITHDRAW_BUSINESS_FEE = 0.005;
+    public const WITHDRAW_PRIVATE_LIMIT = 1000;
+    public const FREE_OPERATIONS = 3;
 
-    private UserBalanceStore $balanceStore;
-    private CurrencyService $currencyService;
+    /** @var UserBalanceStore */
+    private $balanceStore;
+
+    /** @var CurrencyService */
+    private $currencyService;
 
     public function __construct(UserBalanceStore $balanceStore, CurrencyService $currencyService)
     {
@@ -82,9 +85,10 @@ class MathCalculator
         return 0;
     }
 
-    function round_up($number, $precision = 2)
+    public function round_up($number, $precision = 2)
     {
         $fig = pow(10, $precision);
-        return (ceil($number * $fig) / $fig);
+
+        return ceil($number * $fig) / $fig;
     }
 }

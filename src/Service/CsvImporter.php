@@ -9,7 +9,8 @@ use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 
 class CsvImporter
 {
-    private string $fileName;
+    /** @var string */
+    private $fileName;
     private $file;
 
     public function rows(string $fileName): \Generator

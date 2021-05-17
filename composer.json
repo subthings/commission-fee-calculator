@@ -19,7 +19,7 @@
         }
     },
     "require": {
-        "php": ">=7.4",
+        "php": ">=7.3",
         "ext-bcmath": "*",
         "guzzlehttp/guzzle": "^7.0",
         "symfony/config": "^5.2",
