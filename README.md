@@ -7,7 +7,7 @@ PHP = 7.3.*
 - `composer i`
 - add CURRENCY_CONVERTER_ACCESS_KEY in .env
 
-# To import file run
+# To run file import
 `php calculator commission:calculate input.csv`
 
 Pay attention that input.csv should have following structure (and any name):
