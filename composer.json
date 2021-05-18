@@ -22,11 +22,7 @@
         "php": ">=7.3",
         "ext-bcmath": "*",
         "guzzlehttp/guzzle": "^7.0",
-        "symfony/config": "^5.2",
-        "symfony/console": "^5.2",
-        "symfony/dependency-injection": "^5.2",
         "symfony/dotenv": "^5.2",
-        "symfony/yaml": "^5.2",
         "ext-json": "*"
     },
     "require-dev": {

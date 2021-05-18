@@ -16,14 +16,9 @@ class CalculateCommission extends Command
 {
     protected static $defaultName = 'commission:calculate';
 
-    /**
-     * @var CsvImporter
-     */
+    /** @var CsvImporter */
     private $csvImporter;
-
-    /**
-     * @var MathCalculator
-     */
+    /** @var MathCalculator */
     private $mathCalculator;
 
     public function __construct(CsvImporter $csvImporter, MathCalculator $mathCalculator)

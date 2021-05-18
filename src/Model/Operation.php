@@ -22,19 +22,14 @@ class Operation
 
     /** @var \DateTime */
     private $date;
-
     /** @var int */
     private $userId;
-
     /** @var int */
     private $userType;
-
     /** @var int */
     private $operationType;
-
     /** @var float */
     private $operationAmount;
-
     /** @var string */
     private $operationCurrency;
 

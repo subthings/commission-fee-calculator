@@ -8,15 +8,14 @@ use CommissionTask\Model\Operation;
 
 class MathCalculator
 {
-    public const DEPOSIT_FEE = 0.0003;
-    public const WITHDRAW_PRIVATE_FEE = 0.003;
-    public const WITHDRAW_BUSINESS_FEE = 0.005;
-    public const WITHDRAW_PRIVATE_LIMIT = 1000;
-    public const FREE_OPERATIONS = 3;
+    private const DEPOSIT_FEE = 0.0003;
+    private const WITHDRAW_PRIVATE_FEE = 0.003;
+    private const WITHDRAW_BUSINESS_FEE = 0.005;
+    private const WITHDRAW_PRIVATE_LIMIT = 1000;
+    private const FREE_OPERATIONS = 3;
 
     /** @var UserBalanceStore */
     private $balanceStore;
-
     /** @var CurrencyService */
     private $currencyService;
 

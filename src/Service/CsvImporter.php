@@ -11,6 +11,7 @@ class CsvImporter
 {
     /** @var string */
     private $fileName;
+    /** @var resource */
     private $file;
 
     public function rows(string $fileName): \Generator
