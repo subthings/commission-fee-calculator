@@ -8,8 +8,6 @@ use GuzzleHttp\Client;
 
 class CurrencyService
 {
-    public const EUR_CURRENCY = 'EUR';
-
     /** @var Client */
     private $client;
 
@@ -58,14 +56,14 @@ class CurrencyService
         );
     }
 
-    public function getCurrencyFromEuroAmount(string $currencyTo, string $amount, \DateTime $date): string
+    public function getCurrencyFromDefaultAmount(string $currencyTo, string $amount, \DateTime $date): string
     {
-        return $this->getConvertedAmount(self::EUR_CURRENCY, $currencyTo, $amount, $date);
+        return $this->getConvertedAmount(getenv('DEFAULT_CURRENCY'), $currencyTo, $amount, $date);
     }
 
-    public function getEuroFromCurrencyAmount(string $currencyFrom, string $amount, \DateTime $date): string
+    public function getDefaultFromCurrencyAmount(string $currencyFrom, string $amount, \DateTime $date): string
     {
-        return $this->getConvertedAmount($currencyFrom, self::EUR_CURRENCY, $amount, $date);
+        return $this->getConvertedAmount($currencyFrom, getenv('DEFAULT_CURRENCY'), $amount, $date);
     }
 
     public function requestCurrencies(string $formattedDate, string $currencyFrom, string $currencyTo): array

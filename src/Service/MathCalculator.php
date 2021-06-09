@@ -8,12 +8,6 @@ use CommissionTask\Model\Operation;
 
 class MathCalculator
 {
-    private const DEPOSIT_FEE = '0.0003';
-    private const WITHDRAW_PRIVATE_FEE = '0.003';
-    private const WITHDRAW_BUSINESS_FEE = '0.005';
-    private const WITHDRAW_PRIVATE_LIMIT = '1000';
-    private const FREE_OPERATIONS = '3';
-
     /** @var UserBalanceStore */
     private $balanceStore;
     /** @var CurrencyService */
@@ -45,12 +39,12 @@ class MathCalculator
 
     public function computeDepositCommission(string $deposit): string
     {
-        return bcmul($deposit, self::DEPOSIT_FEE, 2);
+        return bcmul($deposit, getenv('DEPOSIT_FEE'), 2);
     }
 
     public function computeBusinessWithdrawCommission(string $deposit): string
     {
-        return bcmul($deposit, self::WITHDRAW_BUSINESS_FEE, 2);
+        return bcmul($deposit, getenv('WITHDRAW_BUSINESS_FEE'), 2);
     }
 
     public function computePrivateWithdrawCommission(
@@ -59,25 +53,25 @@ class MathCalculator
         \DateTime $date,
         string $currency
     ): string {
-        $euroAmount = $this->currencyService->getEuroFromCurrencyAmount($currency, $amount, $date);
+        $euroAmount = $this->currencyService->getDefaultFromCurrencyAmount($currency, $amount, $date);
         $mondayDate = date('d-M-Y', strtotime("Monday this week {$date->format('Y-M-d')}"));
         $this->balanceStore->addAmount($userId, $mondayDate, $euroAmount);
 
-        if ($this->balanceStore->getCount($userId, $mondayDate) > self::FREE_OPERATIONS) {
-            return bcmul($amount, self::WITHDRAW_PRIVATE_FEE, 2);
+        if ($this->balanceStore->getCount($userId, $mondayDate) > getenv('FREE_OPERATIONS')) {
+            return bcmul($amount, getenv('WITHDRAW_PRIVATE_FEE'), 2);
         }
 
         $operationAmount = $this->balanceStore->getAmount($userId, $mondayDate);
-        if (($remainingFreeAmount = bcsub($operationAmount, self::WITHDRAW_PRIVATE_LIMIT, 2)) > 0) {
+        if (($remainingFreeAmount = bcsub($operationAmount, getenv('WITHDRAW_PRIVATE_LIMIT'), 2)) > 0) {
             return bcmul(
                 (min(
-                    $this->currencyService->getCurrencyFromEuroAmount(
+                    $this->currencyService->getCurrencyFromDefaultAmount(
                         $currency,
                         $remainingFreeAmount,
                         $date
                     ),
                     $amount
-                )), self::WITHDRAW_PRIVATE_FEE,
+                )), getenv('WITHDRAW_PRIVATE_FEE'),
                 2
             );
         }
