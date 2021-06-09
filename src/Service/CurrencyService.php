@@ -8,8 +8,7 @@ use GuzzleHttp\Client;
 
 class CurrencyService
 {
-    /** @var Client */
-    private $client;
+    private Client $client;
 
     public function __construct()
     {

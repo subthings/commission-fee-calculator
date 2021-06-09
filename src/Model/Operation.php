@@ -20,18 +20,12 @@ class Operation
         self::DEPOSIT_TYPE => 1,
     ];
 
-    /** @var \DateTime */
-    private $date;
-    /** @var int */
-    private $userId;
-    /** @var int */
-    private $userType;
-    /** @var int */
-    private $operationType;
-    /** @var string */
-    private $operationAmount;
-    /** @var string */
-    private $operationCurrency;
+    private \DateTime $date;
+    private int $userId;
+    private int $userType;
+    private int $operationType;
+    private string $operationAmount;
+    private string $operationCurrency;
 
     public function __construct(array $operationRow)
     {

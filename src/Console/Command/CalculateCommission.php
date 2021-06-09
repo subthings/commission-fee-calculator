@@ -17,12 +17,9 @@ class CalculateCommission extends Command
 {
     protected static $defaultName = 'commission:calculate';
 
-    /** @var RowsReaderInterface */
-    private $rowsReader;
-    /** @var MathCalculator */
-    private $mathCalculator;
-    /** @var LoggerInterface */
-    private $logger;
+    private RowsReaderInterface $rowsReader;
+    private MathCalculator $mathCalculator;
+    private LoggerInterface $logger;
 
     public function __construct(RowsReaderInterface $rowsReader, MathCalculator $mathCalculator, LoggerInterface $logger)
     {

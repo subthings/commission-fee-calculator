@@ -12,11 +12,12 @@ use CommissionTask\Service\MathCalculator;
 
 class MathTest extends TestCase
 {
-    /** @var MathCalculator $math */
-    private $math;
+    private MathCalculator $math;
 
-    public function setUp()
+    public function setUp(): void
     {
+        parent::setUp();
+
         $userBalanceStore = new UserBalanceStore();
         $mockResponse = $this->getMockBuilder(CurrencyService::class)
             ->disableOriginalConstructor()->setMethods(
@@ -65,120 +66,120 @@ class MathTest extends TestCase
         return [
             'compute fee for 1200.00 EUR private withdraw at 2014-12-31' => [
                 '2014-12-31',
-                4,
+                '4',
                 'private',
                 'withdraw',
-                1200.00,
+                '1200.00',
                 'EUR',
-                0.60
+                '0.60',
             ],
             'compute fee for 1000.00 EUR private withdraw at 2015-01-01' => [
                 '2015-01-01',
-                4,
+                '4',
                 'private',
                 'withdraw',
-                1000.00,
+                '1000.00',
                 'EUR',
-                3.00
+                '3.00',
             ],
             'compute fee for 1000.00 EUR private withdraw at 2016-01-05' => [
                 '2016-01-05',
-                4,
+                '4',
                 'private',
                 'withdraw',
-                1000.00,
+                '1000.00',
                 'EUR',
-                0.00
+                '0.00',
             ],
             'compute fee for 200.00 EUR private deposit at 2016-01-05' => [
                 '2016-01-05',
-                1,
+                '1',
                 'private',
                 'deposit',
-                200,
+                '200',
                 'EUR',
-                0.06
+                '0.06',
             ],
             'compute fee for 200.00 EUR business withdraw 2016-01-06' => [
                 '2016-01-06',
-                2,
+                '2',
                 'business',
                 'withdraw',
-                300.00,
+                '300.00',
                 'EUR',
-                1.50
+                '1.50',
             ],
             'compute fee for 30000 JPY private withdraw at 2016-01-06' => [
                 '2016-01-06',
-                1,
+                '1',
                 'private',
                 'withdraw',
-                30000,
+                '30000',
                 'JPY',
-                0
+                '0.00',
             ],
             'compute fee for 1000.00 EUR private withdraw at 2016-01-07' => [
                 '2016-01-07',
-                1,
+                '1',
                 'private',
                 'withdraw',
-                1000.00,
+                '1000.00',
                 'EUR',
-                0.70
+                '0.70',
             ],
             'compute fee for 100.00 USD private withdraw at 2016-01-07' => [
                 '2016-01-07',
-                1,
+                '1',
                 'private',
                 'withdraw',
-                100.00,
+                '100.00',
                 'USD',
-                0.30
+                '0.30',
             ],
             'compute fee for 100.00 EUR private withdraw at 2016-01-10' => [
                 '2016-01-10',
-                1,
+                '1',
                 'private',
                 'withdraw',
-                100.00,
+                '100.00',
                 'EUR',
-                0.30
+                '0.30',
             ],
             'compute fee for 10000.00 EUR private deposit at 2016-01-10' => [
                 '2016-01-10',
-                2,
+                '2',
                 'business',
                 'deposit',
-                10000.00,
+                '10000.00',
                 'EUR',
-                3.00
+                '3.00',
             ],
             'compute fee for 1000.00 EUR private withdraw at 2016-01-10' => [
                 '2016-01-10',
-                3,
+                '3',
                 'private',
                 'withdraw',
-                1000.00,
+                '1000.00',
                 'EUR',
-                0.00
+                '0.00',
             ],
             'compute fee for 300.00 EUR private withdraw at 2016-02-15' => [
                 '2016-02-15',
-                1,
+                '1',
                 'private',
                 'withdraw',
-                300.00,
+                '300.00',
                 'EUR',
-                0.00
+                '0.00',
             ],
             'compute fee for 3000000 JPY private withdraw at 2016-02-19' => [
                 '2016-02-19',
-                5,
+                '5',
                 'private',
                 'withdraw',
-                3000000,
+                '3000000',
                 'JPY',
-                8612
+                '8612',
             ],
         ];
     }

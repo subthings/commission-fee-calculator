@@ -8,10 +8,8 @@ use CommissionTask\Model\Operation;
 
 class MathCalculator
 {
-    /** @var UserBalanceStore */
-    private $balanceStore;
-    /** @var CurrencyService */
-    private $currencyService;
+    private UserBalanceStore $balanceStore;
+    private CurrencyService $currencyService;
 
     public function __construct(UserBalanceStore $balanceStore, CurrencyService $currencyService)
     {
@@ -76,6 +74,6 @@ class MathCalculator
             );
         }
 
-        return '0';
+        return '0.00';
     }
 }
