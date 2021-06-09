@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace CommissionTask\Service;
+namespace CommissionTask\Service\Importers;
 
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 
-class CsvImporter
+class CsvRowsReader implements RowsReaderInterface
 {
     public function rows(string $fileName): \Generator
     {

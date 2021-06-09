@@ -4,22 +4,22 @@
 require __DIR__.'/vendor/autoload.php';
 
 use CommissionTask\Service\CurrencyService;
+use CommissionTask\Service\Importers\CsvRowsReader;
 use CommissionTask\Service\MathCalculator;
 use CommissionTask\Service\UserBalanceStore;
 use Symfony\Component\Console\Application;
 use CommissionTask\Console\Command\CalculateCommission;
-use CommissionTask\Service\CsvImporter;
 use Symfony\Component\Dotenv\Dotenv;
 
 $dotenv = new Dotenv();
 $dotenv->usePutenv(true)->bootEnv(__DIR__.'/.env');
 
 $application = new Application();
-$csvImporter = new CsvImporter;
+$csvRowsReader = new CsvRowsReader;
 $currencyService = new CurrencyService();
 $userBalance = new UserBalanceStore();
 
 $mathCalculator = new MathCalculator($userBalance, $currencyService);
-$application->add(new CalculateCommission($csvImporter, $mathCalculator));
+$application->add(new CalculateCommission($csvRowsReader, $mathCalculator));
 
 $application->run();

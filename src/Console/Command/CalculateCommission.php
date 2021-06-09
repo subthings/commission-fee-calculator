@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace CommissionTask\Console\Command;
 
 use CommissionTask\Model\Operation;
-use CommissionTask\Service\CsvImporter;
+use CommissionTask\Service\Importers\RowsReaderInterface;
 use CommissionTask\Service\MathCalculator;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -16,15 +16,15 @@ class CalculateCommission extends Command
 {
     protected static $defaultName = 'commission:calculate';
 
-    /** @var CsvImporter */
-    private $csvImporter;
+    /** @var RowsReaderInterface */
+    private $rowsReader;
     /** @var MathCalculator */
     private $mathCalculator;
 
-    public function __construct(CsvImporter $csvImporter, MathCalculator $mathCalculator)
+    public function __construct(RowsReaderInterface $rowsReader, MathCalculator $mathCalculator)
     {
         parent::__construct();
-        $this->csvImporter = $csvImporter;
+        $this->rowsReader = $rowsReader;
         $this->mathCalculator = $mathCalculator;
     }
 
@@ -38,7 +38,7 @@ class CalculateCommission extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        foreach ($this->csvImporter->rows($input->getArgument('file')) as $row) {
+        foreach ($this->rowsReader->rows($input->getArgument('file')) as $row) {
             if (is_array($row)) {
                 $operation = new Operation($row);
                 $output->writeln('<fg=black;bg=cyan>' . $this->mathCalculator->computeCommission($operation) . '</>');
