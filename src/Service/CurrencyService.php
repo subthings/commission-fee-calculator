@@ -23,8 +23,12 @@ class CurrencyService
         );
     }
 
-    public function getConvertedAmount(string $currencyFrom, string $currencyTo, float $amount, \DateTime $date): float
-    {
+    public function getConvertedAmount(
+        string $currencyFrom,
+        string $currencyTo,
+        string $amount,
+        \DateTime $date
+    ): ?string {
         if ($currencyFrom === $currencyTo) {
             return $amount;
         }
@@ -43,20 +47,28 @@ class CurrencyService
             }
         }
 
-        return $amount / (float)$_COOKIE[$formattedDate][$currencyFrom] * (float)$_COOKIE[$formattedDate][$currencyTo];
+        return bcmul(
+            (string) bcdiv(
+                $amount,
+                (string) $_COOKIE[$formattedDate][$currencyFrom],
+                2
+            ),
+            (string) $_COOKIE[$formattedDate][$currencyTo],
+            2
+        );
     }
 
-    public function getCurrencyFromEuroAmount(string $currencyTo, float $amount, \DateTime $date): float
+    public function getCurrencyFromEuroAmount(string $currencyTo, string $amount, \DateTime $date): string
     {
         return $this->getConvertedAmount(self::EUR_CURRENCY, $currencyTo, $amount, $date);
     }
 
-    public function getEuroFromCurrencyAmount(string $currencyFrom, float $amount, \DateTime $date): float
+    public function getEuroFromCurrencyAmount(string $currencyFrom, string $amount, \DateTime $date): string
     {
         return $this->getConvertedAmount($currencyFrom, self::EUR_CURRENCY, $amount, $date);
     }
 
-    public function requestCurrencies(string $formattedDate, string $currencyFrom, string $currencyTo)
+    public function requestCurrencies(string $formattedDate, string $currencyFrom, string $currencyTo): array
     {
         if ($apiKey = getenv('CURRENCY_CONVERTER_ACCESS_KEY')) {
             // had to add query this way didn't work in array

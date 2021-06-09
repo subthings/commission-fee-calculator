@@ -28,7 +28,7 @@ class Operation
     private $userType;
     /** @var int */
     private $operationType;
-    /** @var float */
+    /** @var string */
     private $operationAmount;
     /** @var string */
     private $operationCurrency;
@@ -39,7 +39,7 @@ class Operation
         $this->userId = (int) $operationRow[1];
         $this->userType = (int) self::USER_TYPES[$operationRow[2]];
         $this->operationType = (int) self::OPERATION_TYPES[$operationRow[3]];
-        $this->operationAmount = (float) $operationRow[4];
+        $this->operationAmount = $operationRow[4];
         $this->operationCurrency = $operationRow[5];
     }
 
@@ -63,7 +63,7 @@ class Operation
         return $this->operationType;
     }
 
-    public function getOperationAmount(): float
+    public function getOperationAmount(): string
     {
         return $this->operationAmount;
     }

@@ -8,11 +8,11 @@ use CommissionTask\Model\Operation;
 
 class MathCalculator
 {
-    private const DEPOSIT_FEE = 0.0003;
-    private const WITHDRAW_PRIVATE_FEE = 0.003;
-    private const WITHDRAW_BUSINESS_FEE = 0.005;
-    private const WITHDRAW_PRIVATE_LIMIT = 1000;
-    private const FREE_OPERATIONS = 3;
+    private const DEPOSIT_FEE = '0.0003';
+    private const WITHDRAW_PRIVATE_FEE = '0.003';
+    private const WITHDRAW_BUSINESS_FEE = '0.005';
+    private const WITHDRAW_PRIVATE_LIMIT = '1000';
+    private const FREE_OPERATIONS = '3';
 
     /** @var UserBalanceStore */
     private $balanceStore;
@@ -25,7 +25,7 @@ class MathCalculator
         $this->balanceStore = $balanceStore;
     }
 
-    public function computeCommission(Operation $operation): float
+    public function computeCommission(Operation $operation): string
     {
         if ($operation->getOperationType() === Operation::OPERATION_TYPES[Operation::DEPOSIT_TYPE]) {
             return $this->computeDepositCommission($operation->getOperationAmount());
@@ -43,51 +43,45 @@ class MathCalculator
         );
     }
 
-    public function computeDepositCommission(float $deposit): float
+    public function computeDepositCommission(string $deposit): string
     {
-        return $this->round_up($deposit * self::DEPOSIT_FEE);
+        return bcmul($deposit, self::DEPOSIT_FEE, 2);
     }
 
-    public function computeBusinessWithdrawCommission(float $deposit): float
+    public function computeBusinessWithdrawCommission(string $deposit): string
     {
-        return $this->round_up($deposit * self::WITHDRAW_BUSINESS_FEE);
+        return bcmul($deposit, self::WITHDRAW_BUSINESS_FEE, 2);
     }
 
     public function computePrivateWithdrawCommission(
-        float $amount,
+        string $amount,
         int $userId,
         \DateTime $date,
         string $currency
-    ): float {
+    ): string {
         $euroAmount = $this->currencyService->getEuroFromCurrencyAmount($currency, $amount, $date);
         $mondayDate = date('d-M-Y', strtotime("Monday this week {$date->format('Y-M-d')}"));
         $this->balanceStore->addAmount($userId, $mondayDate, $euroAmount);
 
         if ($this->balanceStore->getCount($userId, $mondayDate) > self::FREE_OPERATIONS) {
-            return $this->round_up($amount * self::WITHDRAW_PRIVATE_FEE);
+            return bcmul($amount, self::WITHDRAW_PRIVATE_FEE, 2);
         }
 
         $operationAmount = $this->balanceStore->getAmount($userId, $mondayDate);
-        if ($operationAmount > self::WITHDRAW_PRIVATE_LIMIT) {
-            return $this->round_up(
+        if (($remainingFreeAmount = bcsub($operationAmount, self::WITHDRAW_PRIVATE_LIMIT, 2)) > 0) {
+            return bcmul(
                 (min(
                     $this->currencyService->getCurrencyFromEuroAmount(
                         $currency,
-                        $operationAmount - self::WITHDRAW_PRIVATE_LIMIT,
+                        $remainingFreeAmount,
                         $date
                     ),
                     $amount
-                )) * self::WITHDRAW_PRIVATE_FEE
+                )), self::WITHDRAW_PRIVATE_FEE,
+                2
             );
         }
 
-        return 0;
-    }
-
-    public function round_up($number, $precision = 2)
-    {
-        $fig = pow(10, $precision);
-
-        return ceil($number * $fig) / $fig;
+        return '0';
     }
 }

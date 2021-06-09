@@ -5,7 +5,7 @@ PHP = 7.3.*
 
 # Installation
 - `composer i`
-- add CURRENCY_CONVERTER_ACCESS_KEY in .env
+- add CURRENCY_CONVERTER_ACCESS_KEY in .env (that is API Access Key from https://currencylayer.com, to get it create account, for the app free account will be enought)
 
 # To run file import
 `php calculator commission:calculate input.csv`

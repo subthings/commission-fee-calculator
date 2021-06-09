@@ -26,7 +26,7 @@ class MathTest extends TestCase
         $mockResponse->expects($this->any())
             ->method('requestCurrencies')->willReturn(
                 [
-                    'quotes' => ['USDJPY' => 112.52, 'USDEUR' => 0.87, 'USDUSD' => 1],
+                    'quotes' => ['USDJPY' => 129.53 / 1.1497, 'USDEUR' => 1 / 1.1497, 'USDUSD' => 1],
                     'success' => true,
                 ]
             );
