@@ -7,6 +7,7 @@ namespace CommissionTask\Console\Command;
 use CommissionTask\Model\Operation;
 use CommissionTask\Service\Importers\RowsReaderInterface;
 use CommissionTask\Service\MathCalculator;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -20,12 +21,15 @@ class CalculateCommission extends Command
     private $rowsReader;
     /** @var MathCalculator */
     private $mathCalculator;
+    /** @var LoggerInterface */
+    private $logger;
 
-    public function __construct(RowsReaderInterface $rowsReader, MathCalculator $mathCalculator)
+    public function __construct(RowsReaderInterface $rowsReader, MathCalculator $mathCalculator, LoggerInterface $logger)
     {
         parent::__construct();
         $this->rowsReader = $rowsReader;
         $this->mathCalculator = $mathCalculator;
+        $this->logger = $logger;
     }
 
     protected function configure(): void
@@ -38,14 +42,21 @@ class CalculateCommission extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        foreach ($this->rowsReader->rows($input->getArgument('file')) as $row) {
-            if (is_array($row)) {
-                $operation = new Operation($row);
-                $output->writeln('<fg=black;bg=cyan>' . $this->mathCalculator->computeCommission($operation) . '</>');
-            } else {
-                return Command::FAILURE;
+        try {
+            foreach ($this->rowsReader->rows($input->getArgument('file')) as $row) {
+                try {
+                    $operation = new Operation($row);
+                    $output->writeln('<info>' . $this->mathCalculator->computeCommission($operation) . '</info>');
+                } catch (\Error $error) {
+                    $this->logger->error($error);
+                }
             }
+        } catch (\Exception $exception) {
+            $this->logger->critical($exception);
+            $output->writeln('<error>' . $exception->getMessage() . '</error>');
+            return Command::FAILURE;
         }
+
 
         return Command::SUCCESS;
     }

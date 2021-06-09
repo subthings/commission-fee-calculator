@@ -26,7 +26,7 @@ class CurrencyService
         string $currencyTo,
         string $amount,
         \DateTime $date
-    ): ?string {
+    ): string {
         if ($currencyFrom === $currencyTo) {
             return $amount;
         }
