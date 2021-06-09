@@ -33,11 +33,17 @@ class CurrencyService
         if (!isset($_COOKIE[$formattedDate][$currencyFrom]) || !isset($_COOKIE[$formattedDate][$currencyTo])) {
             $responseContent = $this->requestCurrencies($formattedDate, $currencyFrom, $currencyTo);
 
-            $_COOKIE[$formattedDate][$currencyTo] = json_decode($responseContent, true)['quotes']["USD$currencyTo"];
-            $_COOKIE[$formattedDate][$currencyFrom] = json_decode($responseContent, true)['quotes']["USD$currencyFrom"];
+            if ($responseContent['success']) {
+                $_COOKIE[$formattedDate][$currencyTo] = $responseContent['quotes']["USD$currencyTo"];
+                $_COOKIE[$formattedDate][$currencyFrom] = $responseContent['quotes']["USD$currencyFrom"];
+            } elseif ($responseContent['error'] && $responseContent['error']['info']) {
+                throw new \Exception("Problem with api: {$responseContent['error']['info']}");
+            } else {
+                throw new \Exception('Unexpected problem with api.');
+            }
         }
 
-        return $amount / (float) $_COOKIE[$formattedDate][$currencyFrom] * (float) $_COOKIE[$formattedDate][$currencyTo];
+        return $amount / (float)$_COOKIE[$formattedDate][$currencyFrom] * (float)$_COOKIE[$formattedDate][$currencyTo];
     }
 
     public function getCurrencyFromEuroAmount(string $currencyTo, float $amount, \DateTime $date): float
@@ -52,9 +58,17 @@ class CurrencyService
 
     public function requestCurrencies(string $formattedDate, string $currencyFrom, string $currencyTo)
     {
-        // had to add query this way didn't work in array
-        return $this->client->get(
-            "/historical?access_key={$_ENV['CURRENCY_CONVERTER_ACCESS_KEY']}&date=$formattedDate&currencies=$currencyFrom,$currencyTo",
-        )->getBody()->getContents();
+        if ($apiKey = getenv('CURRENCY_CONVERTER_ACCESS_KEY')) {
+            // had to add query this way didn't work in array
+            return json_decode(
+                $response = $this->client->get(
+                    "/historical?access_key=$apiKey&date=$formattedDate&currencies=$currencyFrom,$currencyTo",
+                )->getBody()->getContents()
+                ,
+                true
+            );
+        }
+
+        throw new \Exception('Please add CURRENCY_CONVERTER_ACCESS_KEY in your .env.local file');
     }
 }

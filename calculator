@@ -12,7 +12,7 @@ use CommissionTask\Service\CsvImporter;
 use Symfony\Component\Dotenv\Dotenv;
 
 $dotenv = new Dotenv();
-$dotenv->load(__DIR__.'/.env');
+$dotenv->usePutenv(true)->bootEnv(__DIR__.'/.env');
 
 $application = new Application();
 $csvImporter = new CsvImporter;

@@ -24,7 +24,12 @@ class MathTest extends TestCase
             )
             ->getMock();
         $mockResponse->expects($this->any())
-            ->method('requestCurrencies')->willReturn('{"quotes":{"USDJPY":112.52,"USDEUR":0.87,"USDUSD":1}}');
+            ->method('requestCurrencies')->willReturn(
+                [
+                    'quotes' => ['USDJPY' => 112.52, 'USDEUR' => 0.87, 'USDUSD' => 1],
+                    'success' => true,
+                ]
+            );
         $this->math = new MathCalculator($userBalanceStore, $mockResponse);
     }
 
