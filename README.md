@@ -4,11 +4,11 @@
 PHP = 7.3.*
 
 # Installation
-- `composer i`
+- `./install`
 - add CURRENCY_CONVERTER_ACCESS_KEY in .env (that is API Access Key from https://currencylayer.com, to get it create account, for the app free account will be enought)
 
 # To run file import
-`php calculator commission:calculate input.csv`
+`./run php calculator commission:calculate input.csv`
 
 Pay attention that input.csv should have following structure (and any name):
 
@@ -20,4 +20,4 @@ Pay attention that input.csv should have following structure (and any name):
 6) operation currency, one of EUR, USD, JPY
 
 # To run tests
-`composer phpunit`
+`./run composer phpunit`

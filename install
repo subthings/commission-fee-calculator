@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+docker-compose down
+
+rm -rf web/vendor/* composer.lock
+
+docker-compose build
+docker-compose up -d
+
+sh "${PWD}"/run composer install
+
+
