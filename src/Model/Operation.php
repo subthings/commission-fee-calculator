@@ -37,8 +37,8 @@ class Operation
     {
         $this->date = new \DateTime($operationRow[0]);
         $this->userId = (int) $operationRow[1];
-        $this->userType = (int) self::USER_TYPES[$operationRow[2]];
-        $this->operationType = (int) self::OPERATION_TYPES[$operationRow[3]];
+        $this->userType = self::USER_TYPES[$operationRow[2]];
+        $this->operationType = self::OPERATION_TYPES[$operationRow[3]];
         $this->operationAmount = $operationRow[4];
         $this->operationCurrency = $operationRow[5];
     }

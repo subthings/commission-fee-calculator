@@ -38,10 +38,10 @@ class CalculateCommission extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        foreach ($this->csvImporter->rows($input->getArgument('file')) as $index => $row) {
+        foreach ($this->csvImporter->rows($input->getArgument('file')) as $row) {
             if (is_array($row)) {
                 $operation = new Operation($row);
-                echo $this->mathCalculator->computeCommission($operation).PHP_EOL;
+                $output->writeln('<fg=black;bg=cyan>' . $this->mathCalculator->computeCommission($operation) . '</>');
             } else {
                 return Command::FAILURE;
             }
