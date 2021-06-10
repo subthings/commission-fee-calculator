@@ -4,3 +4,4 @@ composer.lock
 bin/
 .env.local
 /var/log/
+/.phpunit.result.cache

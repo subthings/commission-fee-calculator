@@ -5,7 +5,6 @@ require __DIR__.'/vendor/autoload.php';
 
 use CommissionTask\Service\CurrencyService;
 use CommissionTask\Service\Importers\CsvRowsReader;
-use CommissionTask\Service\MathCalculator;
 use CommissionTask\Service\UserBalanceStore;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
@@ -24,7 +23,6 @@ $csvRowsReader = new CsvRowsReader();
 $currencyService = new CurrencyService();
 $userBalance = new UserBalanceStore();
 
-$mathCalculator = new MathCalculator($userBalance, $currencyService);
-$application->add(new CalculateCommission($csvRowsReader, $mathCalculator, $log));
+$application->add(new CalculateCommission($csvRowsReader, $log));
 
 $application->run();

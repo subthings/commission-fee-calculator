@@ -12,7 +12,7 @@ class CsvRowsReader implements RowsReaderInterface
     {
         $file = (file_exists($fileName) ? fopen($fileName, 'rb') : null);
         if (!$file) {
-            throw new InvalidArgumentException('Can`t find file ' . $fileName);
+            throw new InvalidArgumentException('Can`t find file '.$fileName);
         }
 
         try {

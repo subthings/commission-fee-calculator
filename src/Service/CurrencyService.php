@@ -72,8 +72,7 @@ class CurrencyService
             return json_decode(
                 $response = $this->client->get(
                     "/historical?access_key=$apiKey&date=$formattedDate&currencies=$currencyFrom,$currencyTo",
-                )->getBody()->getContents()
-                ,
+                )->getBody()->getContents(),
                 true
             );
         }

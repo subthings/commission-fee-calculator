@@ -5,33 +5,18 @@ declare(strict_types=1);
 namespace CommissionTask\Tests\Service;
 
 use CommissionTask\Model\Operation;
+use CommissionTask\Service\CalculateCommission\CalculateBusinessWithdrawCommission;
+use CommissionTask\Service\CalculateCommission\CalculateDepositCommission;
+use CommissionTask\Service\CalculateCommission\CalculatePrivateWithdrawCommission;
 use CommissionTask\Service\CurrencyService;
 use CommissionTask\Service\UserBalanceStore;
 use PHPUnit\Framework\TestCase;
-use CommissionTask\Service\MathCalculator;
 
-class MathTest extends TestCase
+class CalculateCommissionTest extends TestCase
 {
-    private MathCalculator $math;
-
     public function setUp(): void
     {
         parent::setUp();
-
-        $userBalanceStore = new UserBalanceStore();
-        $mockResponse = $this->getMockBuilder(CurrencyService::class)
-            ->disableOriginalConstructor()->setMethods(
-                ['requestCurrencies']
-            )
-            ->getMock();
-        $mockResponse->expects($this->any())
-            ->method('requestCurrencies')->willReturn(
-                [
-                    'quotes' => ['USDJPY' => 129.53 / 1.1497, 'USDEUR' => 1 / 1.1497, 'USDUSD' => 1],
-                    'success' => true,
-                ]
-            );
-        $this->math = new MathCalculator($userBalanceStore, $mockResponse);
     }
 
     /**
@@ -55,8 +40,9 @@ class MathTest extends TestCase
     ) {
         $this->assertEquals(
             $expectation,
-            $this->math->computeCommission(
-                new Operation([$date, $userId, $userType, $operationType, $amount, $currency])
+            ($this->createOperationByTypes(
+                [$date, $userId, $userType, $operationType, $amount, $currency]
+            )->getCommission()
             )
         );
     }
@@ -182,5 +168,37 @@ class MathTest extends TestCase
                 '8612',
             ],
         ];
+    }
+
+    public function createOperationByTypes(array $row): ?Operation
+    {
+        if ($row[3] === Operation::DEPOSIT_TYPE) {
+            return new Operation($row, new CalculateDepositCommission());
+        }
+
+        if ($row[2] === Operation::BUSINESS_CLIENT) {
+            return new Operation($row, new CalculateBusinessWithdrawCommission());
+        }
+
+        if ($row[2] === Operation::PRIVATE_CLIENT) {
+            $mockResponse = $this->getMockBuilder(CurrencyService::class)
+                ->disableOriginalConstructor()->setMethods(
+                    ['requestCurrencies']
+                )
+                ->getMock();
+            $mockResponse->expects($this->any())
+                ->method('requestCurrencies')->willReturn(
+                    [
+                        'quotes' => ['USDJPY' => 129.53 / 1.1497, 'USDEUR' => 1 / 1.1497, 'USDUSD' => 1],
+                        'success' => true,
+                    ]
+                );
+            return new Operation(
+                $row,
+                new CalculatePrivateWithdrawCommission(new UserBalanceStore, $mockResponse)
+            );
+        }
+
+        return null;
     }
 }

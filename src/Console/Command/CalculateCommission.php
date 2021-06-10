@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace CommissionTask\Console\Command;
 
-use CommissionTask\Model\Operation;
+use CommissionTask\Factory\OperationFactory;
 use CommissionTask\Service\Importers\RowsReaderInterface;
-use CommissionTask\Service\MathCalculator;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -18,14 +17,14 @@ class CalculateCommission extends Command
     protected static $defaultName = 'commission:calculate';
 
     private RowsReaderInterface $rowsReader;
-    private MathCalculator $mathCalculator;
     private LoggerInterface $logger;
 
-    public function __construct(RowsReaderInterface $rowsReader, MathCalculator $mathCalculator, LoggerInterface $logger)
-    {
+    public function __construct(
+        RowsReaderInterface $rowsReader,
+        LoggerInterface $logger
+    ) {
         parent::__construct();
         $this->rowsReader = $rowsReader;
-        $this->mathCalculator = $mathCalculator;
         $this->logger = $logger;
     }
 
@@ -42,18 +41,18 @@ class CalculateCommission extends Command
         try {
             foreach ($this->rowsReader->rows($input->getArgument('file')) as $row) {
                 try {
-                    $operation = new Operation($row);
-                    $output->writeln('<info>' . $this->mathCalculator->computeCommission($operation) . '</info>');
+                    $operation = OperationFactory::createOperationByTypes($row);
+                    $output->writeln('<info>'.$operation->getCommission().'</info>');
                 } catch (\Error $error) {
                     $this->logger->error($error);
                 }
             }
         } catch (\Exception $exception) {
             $this->logger->critical($exception);
-            $output->writeln('<error>' . $exception->getMessage() . '</error>');
+            $output->writeln('<error>'.$exception->getMessage().'</error>');
+
             return Command::FAILURE;
         }
-
 
         return Command::SUCCESS;
     }

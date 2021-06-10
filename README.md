@@ -1,7 +1,7 @@
 ## Commission fee calculator app
 
 # Requirements
-PHP = 7.3.*
+docker, docker compose or php 7.4.* if you want to install the app locally
 
 # Installation
 - `./install`

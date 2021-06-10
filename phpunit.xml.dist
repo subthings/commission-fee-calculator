@@ -30,6 +30,6 @@
         <env name="WITHDRAW_PRIVATE_FEE" value="0.003"/>
         <env name="WITHDRAW_BUSINESS_FEE" value="0.005"/>
         <env name="WITHDRAW_PRIVATE_LIMIT" value="1000"/>
-        <env name="FREE_OPERATIONS" value="3"/>
+        <env name="WITHDRAW_PRIVATE_FREE_OPERATIONS" value="3"/>
     </php>
 </phpunit>

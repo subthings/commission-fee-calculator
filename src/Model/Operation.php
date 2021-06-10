@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace CommissionTask\Model;
 
+use CommissionTask\Service\CalculateCommission\CalculateCommissionInterface;
+
 class Operation
 {
     public const PRIVATE_CLIENT = 'private';
@@ -26,8 +28,9 @@ class Operation
     private int $operationType;
     private string $operationAmount;
     private string $operationCurrency;
+    private CalculateCommissionInterface $calculateCommission;
 
-    public function __construct(array $operationRow)
+    public function __construct(array $operationRow, CalculateCommissionInterface $calculateCommission)
     {
         $this->date = new \DateTime($operationRow[0]);
         $this->userId = (int) $operationRow[1];
@@ -35,6 +38,7 @@ class Operation
         $this->operationType = self::OPERATION_TYPES[$operationRow[3]];
         $this->operationAmount = $operationRow[4];
         $this->operationCurrency = $operationRow[5];
+        $this->calculateCommission = $calculateCommission;
     }
 
     public function getDate(): \DateTime
@@ -65,5 +69,10 @@ class Operation
     public function getOperationCurrency(): string
     {
         return $this->operationCurrency;
+    }
+
+    public function getCommission(): string
+    {
+        return $this->calculateCommission->getCommission($this->operationAmount, $this->getUserId(), $this->getDate(), $this->getOperationCurrency());
     }
 }
