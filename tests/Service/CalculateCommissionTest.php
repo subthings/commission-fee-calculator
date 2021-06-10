@@ -14,11 +14,6 @@ use PHPUnit\Framework\TestCase;
 
 class CalculateCommissionTest extends TestCase
 {
-    public function setUp(): void
-    {
-        parent::setUp();
-    }
-
     /**
      * @dataProvider dataProviderForComputeCommissionTest
      * @param string $date

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace CommissionTask\Service\CalculateCommission;
 
-abstract class CalculateCommissionInterface
+abstract class AbstractCalculateCommission
 {
     final public function getCommission(
         string $amount,

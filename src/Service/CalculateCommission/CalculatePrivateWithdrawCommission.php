@@ -7,7 +7,7 @@ namespace CommissionTask\Service\CalculateCommission;
 use CommissionTask\Service\CurrencyService;
 use CommissionTask\Service\UserBalanceStore;
 
-class CalculatePrivateWithdrawCommission extends CalculateCommissionInterface
+class CalculatePrivateWithdrawCommission extends AbstractCalculateCommission
 {
     private UserBalanceStore $balanceStore;
     private CurrencyService $currencyService;

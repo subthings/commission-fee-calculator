@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace CommissionTask\Model;
 
-use CommissionTask\Service\CalculateCommission\CalculateCommissionInterface;
+use CommissionTask\Service\CalculateCommission\AbstractCalculateCommission;
 
 class Operation
 {
@@ -28,9 +28,9 @@ class Operation
     private int $operationType;
     private string $operationAmount;
     private string $operationCurrency;
-    private CalculateCommissionInterface $calculateCommission;
+    private AbstractCalculateCommission $calculateCommission;
 
-    public function __construct(array $operationRow, CalculateCommissionInterface $calculateCommission)
+    public function __construct(array $operationRow, AbstractCalculateCommission $calculateCommission)
     {
         $this->date = new \DateTime($operationRow[0]);
         $this->userId = (int) $operationRow[1];

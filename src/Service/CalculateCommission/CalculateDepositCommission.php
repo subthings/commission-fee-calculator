@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace CommissionTask\Service\CalculateCommission;
 
-class CalculateDepositCommission extends CalculateCommissionInterface
+class CalculateDepositCommission extends AbstractCalculateCommission
 {
     public function getCommissionFeePercent(): string
     {
