@@ -5,7 +5,7 @@ docker, docker compose or php 7.4.* if you want to install the app locally
 
 # Installation
 - `./install`
-- add CURRENCY_CONVERTER_ACCESS_KEY in .env (that is API Access Key from https://currencylayer.com, to get it create account, for the app free account will be enought)
+- add CURRENCY_CONVERTER_ACCESS_KEY in .env (that is API Access Key from https://currencylayer.com, to get it you'll have to create account, to test the app free account will be enough)
 
 # To run file import
 `./run php calculator commission:calculate input.csv`

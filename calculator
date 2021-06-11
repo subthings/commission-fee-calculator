@@ -20,8 +20,6 @@ $log = new Logger('default');
 $log->pushHandler(new StreamHandler('var/log/' . getenv('APP_ENV') . '.log'));
 
 $csvRowsReader = new CsvRowsReader();
-$currencyService = new CurrencyService();
-$userBalance = new UserBalanceStore();
 
 $application->add(new CalculateCommission($csvRowsReader, $log));
 

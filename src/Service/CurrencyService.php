@@ -10,14 +10,9 @@ class CurrencyService
 {
     private Client $client;
 
-    public function __construct()
+    public function __construct(Client $client)
     {
-        $this->client = new Client(
-            [
-                'base_uri' => 'http://api.currencylayer.com',
-                'timeout' => 2.0,
-            ]
-        );
+        $this->client = $client;
     }
 
     public function getConvertedAmount(
@@ -69,7 +64,7 @@ class CurrencyService
             // had to add query this way didn't work in array
             return json_decode(
                 $response = $this->client->get(
-                    "/historical?access_key=$apiKey&date=$formattedDate&currencies=$currencyFrom,$currencyTo",
+                    "http://api.currencylayer.com/historical?access_key=$apiKey&date=$formattedDate&currencies=$currencyFrom,$currencyTo",
                 )->getBody()->getContents(),
                 true
             );
