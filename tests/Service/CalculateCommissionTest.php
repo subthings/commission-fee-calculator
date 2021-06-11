@@ -177,7 +177,7 @@ class CalculateCommissionTest extends TestCase
 
         if ($row[2] === Operation::PRIVATE_CLIENT) {
             $mockResponse = $this->getMockBuilder(CurrencyService::class)
-                ->disableOriginalConstructor()->setMethods(
+                ->disableOriginalConstructor()->onlyMethods(
                     ['requestCurrencies']
                 )
                 ->getMock();
