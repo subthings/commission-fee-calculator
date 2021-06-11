@@ -160,7 +160,7 @@ class CalculateCommissionTest extends TestCase
                 'withdraw',
                 '3000000',
                 'JPY',
-                '8612',
+                '8612.00',
             ],
         ];
     }

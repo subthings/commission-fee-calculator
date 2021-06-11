@@ -44,14 +44,12 @@ class CurrencyService
             }
         }
 
-        return bcmul(
-            (string) bcdiv(
+        return MoneyCalculator::roundUpMul(
+            MoneyCalculator::roundUpDiv(
                 $amount,
-                (string) $_COOKIE[$formattedDate][$currencyFrom],
-                2
+                (string) $_COOKIE[$formattedDate][$currencyFrom]
             ),
-            (string) $_COOKIE[$formattedDate][$currencyTo],
-            2
+            (string) $_COOKIE[$formattedDate][$currencyTo]
         );
     }
 

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace CommissionTask\Service\CalculateCommission;
 
+use CommissionTask\Service\MoneyCalculator;
+
 abstract class AbstractCalculateCommission
 {
     final public function getCommission(
@@ -12,10 +14,9 @@ abstract class AbstractCalculateCommission
         \DateTime $date,
         string $currency
     ): string {
-        return bcmul(
+        return MoneyCalculator::roundUpMul(
             $this->getCommissionChargedValue($amount, $userId, $date, $currency),
-            $this->getCommissionFeePercent(),
-            2
+            $this->getCommissionFeePercent()
         );
     }
 
