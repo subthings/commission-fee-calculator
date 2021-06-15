@@ -8,11 +8,18 @@ class UserBalanceStore
 {
     private static array $instances = [];
     private array $store = [];
-    protected function __construct() { }
-    protected function __clone() { }
+
+    protected function __construct()
+    {
+    }
+
+    protected function __clone()
+    {
+    }
+
     public function __wakeup()
     {
-        throw new \Exception("Cannot unserialize a singleton.");
+        throw new \Exception('Cannot unserialize a singleton.');
     }
 
     public function addAmount(int $userId, string $mondayDate, string $euroAmount): void
