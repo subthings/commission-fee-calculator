@@ -19,6 +19,7 @@ class CalculateCommissionTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
+        $this->userBalanceStore = UserBalanceStore::getInstance();
     }
 
     /**
@@ -204,15 +205,5 @@ class CalculateCommissionTest extends TestCase
         }
 
         return null;
-    }
-
-    /**
-     * @before
-     */
-    public function onceSetUp()
-    {
-        if (!isset($this->userBalanceStore)) {
-            $this->userBalanceStore = new UserBalanceStore();
-        }
     }
 }

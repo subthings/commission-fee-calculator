@@ -22,7 +22,7 @@ $log->pushHandler(new StreamHandler('var/log/' . getenv('APP_ENV') . '.log'));
 $csvRowsReader = new CsvRowsReader();
 
 $application->add(
-    new CalculateCommission($csvRowsReader, $log, new UserBalanceStore(), new CurrencyService(new \GuzzleHttp\Client()))
+    new CalculateCommission($csvRowsReader, $log, UserBalanceStore::getInstance(), new CurrencyService(new \GuzzleHttp\Client()))
 );
 
 $application->run();

@@ -6,7 +6,14 @@ namespace CommissionTask\Service;
 
 class UserBalanceStore
 {
+    private static array $instances = [];
     private array $store = [];
+    protected function __construct() { }
+    protected function __clone() { }
+    public function __wakeup()
+    {
+        throw new \Exception("Cannot unserialize a singleton.");
+    }
 
     public function addAmount(int $userId, string $mondayDate, string $euroAmount): void
     {
@@ -27,5 +34,15 @@ class UserBalanceStore
     public function getCount(int $userId, string $mondayDate): int
     {
         return $this->store[$userId][$mondayDate]['count'];
+    }
+
+    public static function getInstance(): UserBalanceStore
+    {
+        $cls = static::class;
+        if (!isset(self::$instances[$cls])) {
+            self::$instances[$cls] = new static();
+        }
+
+        return self::$instances[$cls];
     }
 }
