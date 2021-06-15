@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace CommissionTask\Console\Command;
 
 use CommissionTask\Factory\OperationFactory;
+use CommissionTask\Service\CurrencyService;
 use CommissionTask\Service\Importers\RowsReaderInterface;
+use CommissionTask\Service\UserBalanceStore;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -18,14 +20,20 @@ class CalculateCommission extends Command
 
     private RowsReaderInterface $rowsReader;
     private LoggerInterface $logger;
+    private UserBalanceStore $userBalanceStore;
+    private CurrencyService $currencyService;
 
     public function __construct(
         RowsReaderInterface $rowsReader,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        UserBalanceStore $userBalanceStore,
+        CurrencyService $currencyService
     ) {
         parent::__construct();
         $this->rowsReader = $rowsReader;
         $this->logger = $logger;
+        $this->userBalanceStore = $userBalanceStore;
+        $this->currencyService = $currencyService;
     }
 
     protected function configure(): void
@@ -41,7 +49,11 @@ class CalculateCommission extends Command
         try {
             foreach ($this->rowsReader->rows($input->getArgument('file')) as $row) {
                 try {
-                    $operation = OperationFactory::createOperationByTypes($row);
+                    $operation = OperationFactory::createOperationByTypes(
+                        $row,
+                        $this->userBalanceStore,
+                        $this->currencyService
+                    );
                     $output->writeln('<info>'.$operation->getCommission().'</info>');
                 } catch (\Error $error) {
                     $this->logger->error($error);

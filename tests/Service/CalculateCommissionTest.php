@@ -14,8 +14,16 @@ use PHPUnit\Framework\TestCase;
 
 class CalculateCommissionTest extends TestCase
 {
+    private UserBalanceStore $userBalanceStore;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+    }
+
     /**
      * @dataProvider dataProviderForComputeCommissionTest
+     *
      * @param string $date
      * @param string $userId
      * @param string $userType
@@ -160,7 +168,7 @@ class CalculateCommissionTest extends TestCase
                 'withdraw',
                 '3000000',
                 'JPY',
-                '8612.00',
+                '8611.42',
             ],
         ];
     }
@@ -188,12 +196,23 @@ class CalculateCommissionTest extends TestCase
                         'success' => true,
                     ]
                 );
+
             return new Operation(
                 $row,
-                new CalculatePrivateWithdrawCommission(new UserBalanceStore, $mockResponse)
+                new CalculatePrivateWithdrawCommission($this->userBalanceStore, $mockResponse)
             );
         }
 
         return null;
+    }
+
+    /**
+     * @before
+     */
+    public function onceSetUp()
+    {
+        if (!isset($this->userBalanceStore)) {
+            $this->userBalanceStore = new UserBalanceStore();
+        }
     }
 }

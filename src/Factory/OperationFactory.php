@@ -10,12 +10,14 @@ use CommissionTask\Service\CalculateCommission\CalculateDepositCommission;
 use CommissionTask\Service\CalculateCommission\CalculatePrivateWithdrawCommission;
 use CommissionTask\Service\CurrencyService;
 use CommissionTask\Service\UserBalanceStore;
-use GuzzleHttp\Client;
 
 class OperationFactory
 {
-    public static function createOperationByTypes(array $row): ?Operation
-    {
+    public static function createOperationByTypes(
+        array $row,
+        UserBalanceStore $userBalanceStore,
+        CurrencyService $currencyService
+    ): ?Operation {
         if ($row[3] === Operation::DEPOSIT_TYPE) {
             return new Operation($row, new CalculateDepositCommission());
         }
@@ -27,7 +29,7 @@ class OperationFactory
         if ($row[2] === Operation::PRIVATE_CLIENT) {
             return new Operation(
                 $row,
-                new CalculatePrivateWithdrawCommission(new UserBalanceStore(), new CurrencyService(new Client()))
+                new CalculatePrivateWithdrawCommission($userBalanceStore, $currencyService)
             );
         }
 

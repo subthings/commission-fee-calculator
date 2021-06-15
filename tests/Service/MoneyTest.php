@@ -11,6 +11,7 @@ class MoneyTest extends TestCase
 {
     /**
      * @dataProvider dataProviderForRoundUpCommissionTest
+     *
      * @param string $number
      * @param string $expectation
      */

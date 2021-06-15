@@ -9,6 +9,7 @@ use GuzzleHttp\Client;
 class CurrencyService
 {
     private Client $client;
+    private array $store = [];
 
     public function __construct(Client $client)
     {
@@ -26,12 +27,12 @@ class CurrencyService
         }
 
         $formattedDate = $date->format('Y-m-d');
-        if (!isset($_COOKIE[$formattedDate][$currencyFrom]) || !isset($_COOKIE[$formattedDate][$currencyTo])) {
+        if (!isset($this->store[$formattedDate][$currencyFrom]) || !isset($this->store[$formattedDate][$currencyTo])) {
             $responseContent = $this->requestCurrencies($formattedDate, $currencyFrom, $currencyTo);
 
             if ($responseContent['success']) {
-                $_COOKIE[$formattedDate][$currencyTo] = $responseContent['quotes']["USD$currencyTo"];
-                $_COOKIE[$formattedDate][$currencyFrom] = $responseContent['quotes']["USD$currencyFrom"];
+                $this->store[$formattedDate][$currencyTo] = $responseContent['quotes']["USD$currencyTo"];
+                $this->store[$formattedDate][$currencyFrom] = $responseContent['quotes']["USD$currencyFrom"];
             } elseif ($responseContent['error'] && $responseContent['error']['info']) {
                 throw new \Exception("Problem with api: {$responseContent['error']['info']}");
             } else {
@@ -42,9 +43,9 @@ class CurrencyService
         return MoneyCalculator::roundUpMul(
             MoneyCalculator::roundUpDiv(
                 $amount,
-                (string) $_COOKIE[$formattedDate][$currencyFrom]
+                (string) $this->store[$formattedDate][$currencyFrom]
             ),
-            (string) $_COOKIE[$formattedDate][$currencyTo]
+            (string) $this->store[$formattedDate][$currencyTo]
         );
     }
 

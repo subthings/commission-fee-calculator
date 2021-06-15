@@ -6,24 +6,26 @@ namespace CommissionTask\Service;
 
 class UserBalanceStore
 {
+    private array $store = [];
+
     public function addAmount(int $userId, string $mondayDate, string $euroAmount): void
     {
-        if (isset($_COOKIE[$userId][$mondayDate])) {
-            ++$_COOKIE[$userId][$mondayDate]['count'];
-            $_COOKIE[$userId][$mondayDate]['amount'] = bcadd($euroAmount, $_COOKIE[$userId][$mondayDate]['amount'], 2);
+        if (isset($this->store[$userId][$mondayDate])) {
+            ++$this->store[$userId][$mondayDate]['count'];
+            $this->store[$userId][$mondayDate]['amount'] = bcadd($euroAmount, $this->store[$userId][$mondayDate]['amount'], 2);
         } else {
-            $_COOKIE[$userId][$mondayDate]['count'] = 1;
-            $_COOKIE[$userId][$mondayDate]['amount'] = $euroAmount;
+            $this->store[$userId][$mondayDate]['count'] = 1;
+            $this->store[$userId][$mondayDate]['amount'] = $euroAmount;
         }
     }
 
     public function getAmount(int $userId, string $mondayDate): string
     {
-        return $_COOKIE[$userId][$mondayDate]['amount'];
+        return $this->store[$userId][$mondayDate]['amount'];
     }
 
     public function getCount(int $userId, string $mondayDate): int
     {
-        return $_COOKIE[$userId][$mondayDate]['count'];
+        return $this->store[$userId][$mondayDate]['count'];
     }
 }

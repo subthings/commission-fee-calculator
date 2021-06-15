@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php
 
-require __DIR__.'/vendor/autoload.php';
+require __DIR__ . '/vendor/autoload.php';
 
 use CommissionTask\Service\CurrencyService;
 use CommissionTask\Service\Importers\CsvRowsReader;
@@ -13,7 +13,7 @@ use CommissionTask\Console\Command\CalculateCommission;
 use Symfony\Component\Dotenv\Dotenv;
 
 $dotenv = new Dotenv();
-$dotenv->usePutenv(true)->bootEnv(__DIR__.'/.env');
+$dotenv->usePutenv(true)->bootEnv(__DIR__ . '/.env');
 
 $application = new Application();
 $log = new Logger('default');
@@ -21,6 +21,8 @@ $log->pushHandler(new StreamHandler('var/log/' . getenv('APP_ENV') . '.log'));
 
 $csvRowsReader = new CsvRowsReader();
 
-$application->add(new CalculateCommission($csvRowsReader, $log));
+$application->add(
+    new CalculateCommission($csvRowsReader, $log, new UserBalanceStore(), new CurrencyService(new \GuzzleHttp\Client()))
+);
 
 $application->run();
