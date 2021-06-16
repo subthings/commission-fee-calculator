@@ -7,6 +7,7 @@ namespace CommissionTask\Console\Command;
 use CommissionTask\Factory\OperationFactory;
 use CommissionTask\Service\CurrencyService;
 use CommissionTask\Service\Importers\RowsReaderInterface;
+use CommissionTask\Service\MoneyCalculator;
 use CommissionTask\Service\UserBalanceStore;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
@@ -22,18 +23,21 @@ class CalculateCommission extends Command
     private LoggerInterface $logger;
     private UserBalanceStore $userBalanceStore;
     private CurrencyService $currencyService;
+    private MoneyCalculator $moneyCalculator;
 
     public function __construct(
         RowsReaderInterface $rowsReader,
         LoggerInterface $logger,
         UserBalanceStore $userBalanceStore,
-        CurrencyService $currencyService
+        CurrencyService $currencyService,
+        MoneyCalculator $moneyCalculator
     ) {
         parent::__construct();
         $this->rowsReader = $rowsReader;
         $this->logger = $logger;
         $this->userBalanceStore = $userBalanceStore;
         $this->currencyService = $currencyService;
+        $this->moneyCalculator = $moneyCalculator;
     }
 
     protected function configure(): void
@@ -52,7 +56,8 @@ class CalculateCommission extends Command
                     $operation = OperationFactory::createOperationByTypes(
                         $row,
                         $this->userBalanceStore,
-                        $this->currencyService
+                        $this->currencyService,
+                        $this->moneyCalculator
                     );
                     $output->writeln('<info>'.$operation->getCommission().'</info>');
                 } catch (\Error $error) {

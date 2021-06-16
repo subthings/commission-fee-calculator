@@ -9,6 +9,7 @@ use CommissionTask\Service\CalculateCommission\CalculateBusinessWithdrawCommissi
 use CommissionTask\Service\CalculateCommission\CalculateDepositCommission;
 use CommissionTask\Service\CalculateCommission\CalculatePrivateWithdrawCommission;
 use CommissionTask\Service\CurrencyService;
+use CommissionTask\Service\MoneyCalculator;
 use CommissionTask\Service\UserBalanceStore;
 
 class OperationFactory
@@ -16,20 +17,21 @@ class OperationFactory
     public static function createOperationByTypes(
         array $row,
         UserBalanceStore $userBalanceStore,
-        CurrencyService $currencyService
+        CurrencyService $currencyService,
+        MoneyCalculator $moneyCalculator
     ): ?Operation {
         if ($row[3] === Operation::DEPOSIT_TYPE) {
-            return new Operation($row, new CalculateDepositCommission());
+            return new Operation($row, new CalculateDepositCommission($moneyCalculator));
         }
 
         if ($row[2] === Operation::BUSINESS_CLIENT) {
-            return new Operation($row, new CalculateBusinessWithdrawCommission());
+            return new Operation($row, new CalculateBusinessWithdrawCommission($moneyCalculator));
         }
 
         if ($row[2] === Operation::PRIVATE_CLIENT) {
             return new Operation(
                 $row,
-                new CalculatePrivateWithdrawCommission($userBalanceStore, $currencyService)
+                new CalculatePrivateWithdrawCommission($userBalanceStore, $currencyService, $moneyCalculator)
             );
         }
 

@@ -5,17 +5,21 @@ declare(strict_types=1);
 namespace CommissionTask\Service\CalculateCommission;
 
 use CommissionTask\Service\CurrencyService;
+use CommissionTask\Service\MoneyCalculator;
 use CommissionTask\Service\UserBalanceStore;
 
 class CalculatePrivateWithdrawCommission extends AbstractCalculateCommission
 {
     private UserBalanceStore $balanceStore;
     private CurrencyService $currencyService;
+    private MoneyCalculator $moneyCalculator;
 
-    public function __construct(UserBalanceStore $balanceStore, CurrencyService $currencyService)
+    public function __construct(UserBalanceStore $balanceStore, CurrencyService $currencyService, MoneyCalculator $moneyCalculator)
     {
+        parent::__construct($moneyCalculator);
         $this->currencyService = $currencyService;
         $this->balanceStore = $balanceStore;
+        $this->moneyCalculator = $moneyCalculator;
     }
 
     public function getCommissionFeePercent(): string
@@ -34,7 +38,7 @@ class CalculatePrivateWithdrawCommission extends AbstractCalculateCommission
         }
 
         $operationAmount = $this->balanceStore->getAmount($userId, $mondayDate);
-        if (($remainingFreeAmount = bcsub($operationAmount, getenv('WITHDRAW_PRIVATE_LIMIT'), 2)) > 0) {
+        if (($remainingFreeAmount = $this->moneyCalculator->sub($operationAmount, getenv('WITHDRAW_PRIVATE_LIMIT'))) > 0) {
             return min(
                 $this->currencyService->getCurrencyFromDefaultAmount(
                     $currency,

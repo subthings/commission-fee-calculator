@@ -9,6 +9,15 @@ use PHPUnit\Framework\TestCase;
 
 class MoneyTest extends TestCase
 {
+    private MoneyCalculator $moneyCalculator;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->moneyCalculator = new MoneyCalculator();
+    }
+
     /**
      * @dataProvider dataProviderForRoundUpCommissionTest
      *
@@ -19,7 +28,7 @@ class MoneyTest extends TestCase
     {
         $this->assertEquals(
             $expectation,
-            MoneyCalculator::roundUpMoney($number)
+            $this->moneyCalculator->roundUpMoney($number)
         );
     }
 

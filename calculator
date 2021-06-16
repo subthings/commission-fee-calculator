@@ -5,7 +5,9 @@ require __DIR__ . '/vendor/autoload.php';
 
 use CommissionTask\Service\CurrencyService;
 use CommissionTask\Service\Importers\CsvRowsReader;
+use CommissionTask\Service\MoneyCalculator;
 use CommissionTask\Service\UserBalanceStore;
+use GuzzleHttp\Client;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Symfony\Component\Console\Application;
@@ -20,9 +22,16 @@ $log = new Logger('default');
 $log->pushHandler(new StreamHandler('var/log/' . getenv('APP_ENV') . '.log'));
 
 $csvRowsReader = new CsvRowsReader();
+$moneyCalculator = new MoneyCalculator();
 
 $application->add(
-    new CalculateCommission($csvRowsReader, $log, UserBalanceStore::getInstance(), new CurrencyService(new \GuzzleHttp\Client()))
+    new CalculateCommission(
+        $csvRowsReader,
+        $log,
+        UserBalanceStore::getInstance(),
+        new CurrencyService(new Client(), $moneyCalculator, getenv('DEFAULT_CURRENCY')),
+        $moneyCalculator
+    )
 );
 
 $application->run();

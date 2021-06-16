@@ -9,17 +9,21 @@ use CommissionTask\Service\CalculateCommission\CalculateBusinessWithdrawCommissi
 use CommissionTask\Service\CalculateCommission\CalculateDepositCommission;
 use CommissionTask\Service\CalculateCommission\CalculatePrivateWithdrawCommission;
 use CommissionTask\Service\CurrencyService;
+use CommissionTask\Service\MoneyCalculator;
 use CommissionTask\Service\UserBalanceStore;
+use GuzzleHttp\Client;
 use PHPUnit\Framework\TestCase;
 
 class CalculateCommissionTest extends TestCase
 {
     private UserBalanceStore $userBalanceStore;
+    private MoneyCalculator $moneyCalculator;
 
     public function setUp(): void
     {
         parent::setUp();
         $this->userBalanceStore = UserBalanceStore::getInstance();
+        $this->moneyCalculator = new MoneyCalculator();
     }
 
     /**
@@ -177,16 +181,22 @@ class CalculateCommissionTest extends TestCase
     public function createOperationByTypes(array $row): ?Operation
     {
         if ($row[3] === Operation::DEPOSIT_TYPE) {
-            return new Operation($row, new CalculateDepositCommission());
+            return new Operation($row, new CalculateDepositCommission($this->moneyCalculator));
         }
 
         if ($row[2] === Operation::BUSINESS_CLIENT) {
-            return new Operation($row, new CalculateBusinessWithdrawCommission());
+            return new Operation($row, new CalculateBusinessWithdrawCommission($this->moneyCalculator));
         }
 
         if ($row[2] === Operation::PRIVATE_CLIENT) {
             $mockResponse = $this->getMockBuilder(CurrencyService::class)
-                ->disableOriginalConstructor()->onlyMethods(
+                ->setConstructorArgs(
+                    [
+                        $this->getMockBuilder(Client::class)->getMock(),
+                        $this->moneyCalculator,
+                        getenv('DEFAULT_CURRENCY')
+                    ]
+                )->onlyMethods(
                     ['requestCurrencies']
                 )
                 ->getMock();
@@ -200,7 +210,7 @@ class CalculateCommissionTest extends TestCase
 
             return new Operation(
                 $row,
-                new CalculatePrivateWithdrawCommission($this->userBalanceStore, $mockResponse)
+                new CalculatePrivateWithdrawCommission($this->userBalanceStore, $mockResponse, $this->moneyCalculator)
             );
         }
 

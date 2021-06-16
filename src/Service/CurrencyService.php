@@ -9,11 +9,15 @@ use GuzzleHttp\Client;
 class CurrencyService
 {
     private Client $client;
+    private MoneyCalculator $moneyCalculator;
+    private string $defaultCurrency;
     private array $store = [];
 
-    public function __construct(Client $client)
+    public function __construct(Client $client, MoneyCalculator $moneyCalculator, string $defaultCurrency)
     {
         $this->client = $client;
+        $this->moneyCalculator = $moneyCalculator;
+        $this->defaultCurrency = $defaultCurrency;
     }
 
     public function getConvertedAmount(
@@ -27,7 +31,7 @@ class CurrencyService
         }
 
         $formattedDate = $date->format('Y-m-d');
-        if (!isset($this->store[$formattedDate][$currencyFrom]) || !isset($this->store[$formattedDate][$currencyTo])) {
+        if (!isset($this->store[$formattedDate][$currencyFrom], $this->store[$formattedDate][$currencyTo])) {
             $responseContent = $this->requestCurrencies($formattedDate, $currencyFrom, $currencyTo);
 
             if ($responseContent['success']) {
@@ -40,8 +44,8 @@ class CurrencyService
             }
         }
 
-        return MoneyCalculator::roundUpMul(
-            MoneyCalculator::roundUpDiv(
+        return $this->moneyCalculator->roundUpMul(
+            $this->moneyCalculator->roundUpDiv(
                 $amount,
                 (string) $this->store[$formattedDate][$currencyFrom]
             ),
@@ -51,12 +55,12 @@ class CurrencyService
 
     public function getCurrencyFromDefaultAmount(string $currencyTo, string $amount, \DateTime $date): string
     {
-        return $this->getConvertedAmount(getenv('DEFAULT_CURRENCY'), $currencyTo, $amount, $date);
+        return $this->getConvertedAmount($this->defaultCurrency, $currencyTo, $amount, $date);
     }
 
     public function getDefaultFromCurrencyAmount(string $currencyFrom, string $amount, \DateTime $date): string
     {
-        return $this->getConvertedAmount($currencyFrom, getenv('DEFAULT_CURRENCY'), $amount, $date);
+        return $this->getConvertedAmount($currencyFrom, $this->defaultCurrency, $amount, $date);
     }
 
     public function requestCurrencies(string $formattedDate, string $currencyFrom, string $currencyTo): array
@@ -64,8 +68,8 @@ class CurrencyService
         if ($apiKey = getenv('CURRENCY_CONVERTER_ACCESS_KEY')) {
             // had to add query this way didn't work in array
             return json_decode(
-                $response = $this->client->get(
-                    "http://api.currencylayer.com/historical?access_key=$apiKey&date=$formattedDate&currencies=$currencyFrom,$currencyTo",
+                $this->client->get(
+                    getenv('CURRENCY_CONVERTER_API')."/historical?access_key=$apiKey&date=$formattedDate&currencies=$currencyFrom,$currencyTo",
                 )->getBody()->getContents(),
                 true
             );

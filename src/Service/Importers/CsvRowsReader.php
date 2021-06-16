@@ -17,7 +17,7 @@ class CsvRowsReader implements RowsReaderInterface
 
         try {
             while (!feof($file)) {
-                yield fgetcsv($file, 0, ',');
+                yield fgetcsv($file);
             }
         } finally {
             fclose($file);

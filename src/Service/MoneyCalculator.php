@@ -6,20 +6,25 @@ namespace CommissionTask\Service;
 
 class MoneyCalculator
 {
-    public static function roundUpMul(string $multiplier1, string $multiplier2): string
+    public function roundUpMul(string $multiplier1, string $multiplier2): string
     {
-        return MoneyCalculator::roundUpMoney(bcmul($multiplier1, $multiplier2, 4));
+        return $this->roundUpMoney(bcmul($multiplier1, $multiplier2, 4));
     }
 
-    public static function roundUpDiv(string $dividend, string $divider): string
+    public function roundUpDiv(string $dividend, string $divider): string
     {
-        return MoneyCalculator::roundUpMoney(bcdiv($dividend, $divider, 10));
+        return $this->roundUpMoney(bcdiv($dividend, $divider, 10));
     }
 
-    public static function roundUpMoney(string $value): string
+    public function sub($minuend, $subtrahend): string
+    {
+        return bcsub($minuend, $subtrahend, 2);
+    }
+
+    public function roundUpMoney(string $value): string
     {
         $round = pow(10, 2);
 
-        return bcdiv((string) ceil($value * $round), "$round", 2);
+        return bcdiv((string) ceil($value * $round), (string) $round, 2);
     }
 }

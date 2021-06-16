@@ -8,13 +8,20 @@ use CommissionTask\Service\MoneyCalculator;
 
 abstract class AbstractCalculateCommission
 {
+    private MoneyCalculator $moneyCalculator;
+
+    public function __construct(MoneyCalculator $moneyCalculator)
+    {
+        $this->moneyCalculator = $moneyCalculator;
+    }
+
     final public function getCommission(
         string $amount,
         int $userId,
         \DateTime $date,
         string $currency
     ): string {
-        return MoneyCalculator::roundUpMul(
+        return $this->moneyCalculator->roundUpMul(
             $this->getCommissionChargedValue($amount, $userId, $date, $currency),
             $this->getCommissionFeePercent()
         );
