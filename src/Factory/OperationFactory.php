@@ -34,7 +34,7 @@ class OperationFactory
 
     public function createOperationByTypes(
         array $row
-    ): ?Operation {
+    ): Operation {
         if ($row[3] === Operation::DEPOSIT_TYPE) {
             if ($row[2] === Operation::BUSINESS_CLIENT) {
                 return new BusinessDepositOperation($row, new CalculateDepositCommission($this->moneyCalculator));
@@ -54,6 +54,6 @@ class OperationFactory
             }
         }
 
-        throw new \Error("Operation type $row[2] $row[3] is not supported");
+        throw new \Error("Operation type '$row[2] $row[3]' is not supported");
     }
 }
