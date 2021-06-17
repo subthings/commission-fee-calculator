@@ -21,6 +21,11 @@ class MoneyCalculator
         return bcsub($minuend, $subtrahend, 2);
     }
 
+    public function add($addend1, $addend2): string
+    {
+        return bcadd($addend1, $addend2, 2);
+    }
+
     public function roundUpMoney(string $value): string
     {
         $round = pow(10, 2);

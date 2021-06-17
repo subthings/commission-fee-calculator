@@ -28,7 +28,7 @@ $application->add(
     new CalculateCommission(
         $csvRowsReader,
         $log,
-        UserBalanceStore::getInstance(),
+        new UserBalanceStore($moneyCalculator),
         new CurrencyService(new Client(), $moneyCalculator, getenv('DEFAULT_CURRENCY')),
         $moneyCalculator
     )
