@@ -5,10 +5,8 @@ declare(strict_types=1);
 namespace CommissionTask\Console\Command;
 
 use CommissionTask\Factory\OperationFactory;
-use CommissionTask\Service\CurrencyService;
 use CommissionTask\Service\Importers\RowsReaderInterface;
-use CommissionTask\Service\MoneyCalculator;
-use CommissionTask\Service\UserBalanceStore;
+use GuzzleHttp\Exception\GuzzleException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -21,23 +19,17 @@ class CalculateCommission extends Command
 
     private RowsReaderInterface $rowsReader;
     private LoggerInterface $logger;
-    private UserBalanceStore $userBalanceStore;
-    private CurrencyService $currencyService;
-    private MoneyCalculator $moneyCalculator;
+    private OperationFactory $operationFactory;
 
     public function __construct(
         RowsReaderInterface $rowsReader,
         LoggerInterface $logger,
-        UserBalanceStore $userBalanceStore,
-        CurrencyService $currencyService,
-        MoneyCalculator $moneyCalculator
+        OperationFactory $operationFactory
     ) {
         parent::__construct();
         $this->rowsReader = $rowsReader;
         $this->logger = $logger;
-        $this->userBalanceStore = $userBalanceStore;
-        $this->currencyService = $currencyService;
-        $this->moneyCalculator = $moneyCalculator;
+        $this->operationFactory = $operationFactory;
     }
 
     protected function configure(): void
@@ -53,15 +45,19 @@ class CalculateCommission extends Command
         try {
             foreach ($this->rowsReader->rows($input->getArgument('file')) as $row) {
                 try {
-                    $operation = OperationFactory::createOperationByTypes(
-                        $row,
-                        $this->userBalanceStore,
-                        $this->currencyService,
-                        $this->moneyCalculator
-                    );
+                    $operation = $this->operationFactory->createOperationByTypes($row);
                     $output->writeln('<info>'.$operation->getCommission().'</info>');
+                } catch (GuzzleException $exception) {
+                    $this->logger->critical($exception);
+                    $output->writeln('<fg=#c0392b>'.$exception->getMessage().'</>');
+
+                    return Command::FAILURE;
+                } catch (\JsonException $exception) {
+                    $this->logger->critical($exception);
+                    $output->writeln('<fg=#c0392b>'.$exception->getMessage().'</>');
                 } catch (\Error $error) {
                     $this->logger->error($error);
+                    $output->writeln('<fg=#c0392b>'.$error->getMessage().'</>');
                 }
             }
         } catch (\Exception $exception) {

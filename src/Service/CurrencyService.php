@@ -69,9 +69,13 @@ class CurrencyService
             // had to add query this way didn't work in array
             return json_decode(
                 $this->client->get(
-                    getenv('CURRENCY_CONVERTER_API')."/historical?access_key=$apiKey&date=$formattedDate&currencies=$currencyFrom,$currencyTo",
+                    getenv(
+                        'CURRENCY_CONVERTER_API'
+                    )."/historical?access_key=$apiKey&date=$formattedDate&currencies=$currencyFrom,$currencyTo",
                 )->getBody()->getContents(),
-                true
+                true,
+                512,
+                JSON_THROW_ON_ERROR
             );
         }
 

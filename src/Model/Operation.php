@@ -6,7 +6,7 @@ namespace CommissionTask\Model;
 
 use CommissionTask\Service\CalculateCommission\AbstractCalculateCommission;
 
-class Operation
+abstract class Operation
 {
     public const PRIVATE_CLIENT = 'private';
     public const BUSINESS_CLIENT = 'business';
@@ -73,6 +73,6 @@ class Operation
 
     public function getCommission(): string
     {
-        return $this->calculateCommission->getCommission($this->operationAmount, $this->getUserId(), $this->getDate(), $this->getOperationCurrency());
+        return $this->calculateCommission->getCommission($this->getOperationAmount(), $this->getUserId(), $this->getDate(), $this->getOperationCurrency());
     }
 }

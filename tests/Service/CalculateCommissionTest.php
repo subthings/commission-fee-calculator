@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace CommissionTask\Tests\Service;
 
+use CommissionTask\Factory\OperationFactory;
 use CommissionTask\Model\Operation;
-use CommissionTask\Service\CalculateCommission\CalculateBusinessWithdrawCommission;
-use CommissionTask\Service\CalculateCommission\CalculateDepositCommission;
-use CommissionTask\Service\CalculateCommission\CalculatePrivateWithdrawCommission;
 use CommissionTask\Service\CurrencyService;
 use CommissionTask\Service\MoneyCalculator;
 use CommissionTask\Service\UserBalanceStore;
@@ -17,13 +15,37 @@ use PHPUnit\Framework\TestCase;
 class CalculateCommissionTest extends TestCase
 {
     private UserBalanceStore $userBalanceStore;
-    private MoneyCalculator $moneyCalculator;
+    private OperationFactory $operationFactory;
 
     public function setUp(): void
     {
         parent::setUp();
-        $this->userBalanceStore = UserBalanceStore::getInstance();
-        $this->moneyCalculator = new MoneyCalculator();
+        $moneyCalculator = new MoneyCalculator();
+        $mockCurrencyService = $this->getMockBuilder(CurrencyService::class)
+            ->setConstructorArgs(
+                [
+                    $this->getMockBuilder(Client::class)->getMock(),
+                    $moneyCalculator,
+                    getenv('DEFAULT_CURRENCY')
+                ]
+            )->onlyMethods(
+                ['requestCurrencies']
+            )
+            ->getMock();
+        $mockCurrencyService->expects($this->any())
+            ->method('requestCurrencies')->willReturn(
+                [
+                    'quotes' => ['USDJPY' => 129.53 / 1.1497, 'USDEUR' => 1 / 1.1497, 'USDUSD' => 1],
+                    'success' => true,
+                ]
+            );
+
+        $this->userBalanceStore = new UserBalanceStore($moneyCalculator);
+        $this->operationFactory = new OperationFactory(
+            $this->userBalanceStore,
+            $mockCurrencyService,
+            $moneyCalculator
+        );
     }
 
     /**
@@ -35,6 +57,7 @@ class CalculateCommissionTest extends TestCase
      * @param string $operationType
      * @param string $amount
      * @param string $currency
+     * @param array $userBalance
      * @param string $expectation
      */
     public function testComputeCommission(
@@ -44,12 +67,21 @@ class CalculateCommissionTest extends TestCase
         string $operationType,
         string $amount,
         string $currency,
+        array $userBalance,
         string $expectation
     ) {
         $this->assertEquals(
             $expectation,
             ($this->createOperationByTypes(
-                [$date, $userId, $userType, $operationType, $amount, $currency]
+                [
+                    $date,
+                    $userId,
+                    $userType,
+                    $operationType,
+                    $amount,
+                    $currency,
+                    $userBalance,
+                ]
             )->getCommission()
             )
         );
@@ -65,6 +97,7 @@ class CalculateCommissionTest extends TestCase
                 'withdraw',
                 '1200.00',
                 'EUR',
+                ['0.00'],
                 '0.60',
             ],
             'compute fee for 1000.00 EUR private withdraw at 2015-01-01' => [
@@ -74,6 +107,7 @@ class CalculateCommissionTest extends TestCase
                 'withdraw',
                 '1000.00',
                 'EUR',
+                ['1200.00'],
                 '3.00',
             ],
             'compute fee for 1000.00 EUR private withdraw at 2016-01-05' => [
@@ -83,6 +117,7 @@ class CalculateCommissionTest extends TestCase
                 'withdraw',
                 '1000.00',
                 'EUR',
+                ['0.00'],
                 '0.00',
             ],
             'compute fee for 200.00 EUR private deposit at 2016-01-05' => [
@@ -92,6 +127,7 @@ class CalculateCommissionTest extends TestCase
                 'deposit',
                 '200',
                 'EUR',
+                ['0.00'],
                 '0.06',
             ],
             'compute fee for 200.00 EUR business withdraw 2016-01-06' => [
@@ -101,6 +137,7 @@ class CalculateCommissionTest extends TestCase
                 'withdraw',
                 '300.00',
                 'EUR',
+                ['1000.00'],
                 '1.50',
             ],
             'compute fee for 30000 JPY private withdraw at 2016-01-06' => [
@@ -110,6 +147,7 @@ class CalculateCommissionTest extends TestCase
                 'withdraw',
                 '30000',
                 'JPY',
+                ['0.00'],
                 '0.00',
             ],
             'compute fee for 1000.00 EUR private withdraw at 2016-01-07' => [
@@ -119,6 +157,7 @@ class CalculateCommissionTest extends TestCase
                 'withdraw',
                 '1000.00',
                 'EUR',
+                ['231.61'],
                 '0.70',
             ],
             'compute fee for 100.00 USD private withdraw at 2016-01-07' => [
@@ -128,6 +167,7 @@ class CalculateCommissionTest extends TestCase
                 'withdraw',
                 '100.00',
                 'USD',
+                ['231.61', '1000.00'],
                 '0.30',
             ],
             'compute fee for 100.00 EUR private withdraw at 2016-01-10' => [
@@ -137,6 +177,7 @@ class CalculateCommissionTest extends TestCase
                 'withdraw',
                 '100.00',
                 'EUR',
+                ['231.61', '1000.00', '86.9'],
                 '0.30',
             ],
             'compute fee for 10000.00 EUR private deposit at 2016-01-10' => [
@@ -146,6 +187,7 @@ class CalculateCommissionTest extends TestCase
                 'deposit',
                 '10000.00',
                 'EUR',
+                ['0.00'],
                 '3.00',
             ],
             'compute fee for 1000.00 EUR private withdraw at 2016-01-10' => [
@@ -155,6 +197,7 @@ class CalculateCommissionTest extends TestCase
                 'withdraw',
                 '1000.00',
                 'EUR',
+                ['0.00'],
                 '0.00',
             ],
             'compute fee for 300.00 EUR private withdraw at 2016-02-15' => [
@@ -164,6 +207,7 @@ class CalculateCommissionTest extends TestCase
                 'withdraw',
                 '300.00',
                 'EUR',
+                ['0.00'],
                 '0.00',
             ],
             'compute fee for 3000000 JPY private withdraw at 2016-02-19' => [
@@ -173,6 +217,7 @@ class CalculateCommissionTest extends TestCase
                 'withdraw',
                 '3000000',
                 'JPY',
+                ['0.00'],
                 '8611.42',
             ],
         ];
@@ -180,40 +225,14 @@ class CalculateCommissionTest extends TestCase
 
     public function createOperationByTypes(array $row): ?Operation
     {
-        if ($row[3] === Operation::DEPOSIT_TYPE) {
-            return new Operation($row, new CalculateDepositCommission($this->moneyCalculator));
-        }
-
-        if ($row[2] === Operation::BUSINESS_CLIENT) {
-            return new Operation($row, new CalculateBusinessWithdrawCommission($this->moneyCalculator));
-        }
-
-        if ($row[2] === Operation::PRIVATE_CLIENT) {
-            $mockResponse = $this->getMockBuilder(CurrencyService::class)
-                ->setConstructorArgs(
-                    [
-                        $this->getMockBuilder(Client::class)->getMock(),
-                        $this->moneyCalculator,
-                        getenv('DEFAULT_CURRENCY')
-                    ]
-                )->onlyMethods(
-                    ['requestCurrencies']
-                )
-                ->getMock();
-            $mockResponse->expects($this->any())
-                ->method('requestCurrencies')->willReturn(
-                    [
-                        'quotes' => ['USDJPY' => 129.53 / 1.1497, 'USDEUR' => 1 / 1.1497, 'USDUSD' => 1],
-                        'success' => true,
-                    ]
-                );
-
-            return new Operation(
-                $row,
-                new CalculatePrivateWithdrawCommission($this->userBalanceStore, $mockResponse, $this->moneyCalculator)
+        foreach ($row[6] as $previousOperation) {
+            $this->userBalanceStore->addAmount(
+                (int)$row[1],
+                date('d-M-Y', strtotime("Monday this week $row[0]")),
+                $previousOperation
             );
         }
 
-        return null;
+        return $this->operationFactory->createOperationByTypes(array_slice($row, 0, 6));
     }
 }

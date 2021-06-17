@@ -3,6 +3,7 @@
 
 require __DIR__ . '/vendor/autoload.php';
 
+use CommissionTask\Factory\OperationFactory;
 use CommissionTask\Service\CurrencyService;
 use CommissionTask\Service\Importers\CsvRowsReader;
 use CommissionTask\Service\MoneyCalculator;
@@ -23,14 +24,19 @@ $log->pushHandler(new StreamHandler('var/log/' . getenv('APP_ENV') . '.log'));
 
 $csvRowsReader = new CsvRowsReader();
 $moneyCalculator = new MoneyCalculator();
+$operationFactory = new OperationFactory(
+    new UserBalanceStore(
+        $moneyCalculator
+    ),
+    new CurrencyService(new Client(), $moneyCalculator, getenv('DEFAULT_CURRENCY')),
+    $moneyCalculator
+);
 
 $application->add(
     new CalculateCommission(
         $csvRowsReader,
         $log,
-        UserBalanceStore::getInstance(),
-        new CurrencyService(new Client(), $moneyCalculator, getenv('DEFAULT_CURRENCY')),
-        $moneyCalculator
+        $operationFactory
     )
 );
 
