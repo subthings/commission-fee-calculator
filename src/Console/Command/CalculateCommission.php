@@ -5,10 +5,7 @@ declare(strict_types=1);
 namespace CommissionTask\Console\Command;
 
 use CommissionTask\Factory\OperationFactory;
-use CommissionTask\Service\CurrencyService;
 use CommissionTask\Service\Importers\RowsReaderInterface;
-use CommissionTask\Service\MoneyCalculator;
-use CommissionTask\Service\UserBalanceStore;
 use GuzzleHttp\Exception\GuzzleException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;

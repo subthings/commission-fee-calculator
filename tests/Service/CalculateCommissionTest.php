@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace CommissionTask\Tests\Service;
 
+use CommissionTask\Factory\OperationFactory;
 use CommissionTask\Model\Operation;
-use CommissionTask\Service\CalculateCommission\CalculateBusinessWithdrawCommission;
-use CommissionTask\Service\CalculateCommission\CalculateDepositCommission;
-use CommissionTask\Service\CalculateCommission\CalculatePrivateWithdrawCommission;
 use CommissionTask\Service\CurrencyService;
 use CommissionTask\Service\MoneyCalculator;
 use CommissionTask\Service\UserBalanceStore;
@@ -17,13 +15,37 @@ use PHPUnit\Framework\TestCase;
 class CalculateCommissionTest extends TestCase
 {
     private UserBalanceStore $userBalanceStore;
-    private MoneyCalculator $moneyCalculator;
+    private OperationFactory $operationFactory;
 
     public function setUp(): void
     {
         parent::setUp();
-        $this->moneyCalculator = new MoneyCalculator();
-        $this->userBalanceStore = new UserBalanceStore($this->moneyCalculator);
+        $moneyCalculator = new MoneyCalculator();
+        $mockCurrencyService = $this->getMockBuilder(CurrencyService::class)
+            ->setConstructorArgs(
+                [
+                    $this->getMockBuilder(Client::class)->getMock(),
+                    $moneyCalculator,
+                    getenv('DEFAULT_CURRENCY')
+                ]
+            )->onlyMethods(
+                ['requestCurrencies']
+            )
+            ->getMock();
+        $mockCurrencyService->expects($this->any())
+            ->method('requestCurrencies')->willReturn(
+                [
+                    'quotes' => ['USDJPY' => 129.53 / 1.1497, 'USDEUR' => 1 / 1.1497, 'USDUSD' => 1],
+                    'success' => true,
+                ]
+            );
+
+        $this->userBalanceStore = new UserBalanceStore($moneyCalculator);
+        $this->operationFactory = new OperationFactory(
+            $this->userBalanceStore,
+            $mockCurrencyService,
+            $moneyCalculator
+        );
     }
 
     /**
@@ -203,55 +225,14 @@ class CalculateCommissionTest extends TestCase
 
     public function createOperationByTypes(array $row): ?Operation
     {
-        if ($row[3] === Operation::DEPOSIT_TYPE) {
-            return new Operation(array_slice($row, 0, 6), new CalculateDepositCommission($this->moneyCalculator));
-        }
-
-        if ($row[2] === Operation::BUSINESS_CLIENT) {
-            return new Operation(
-                array_slice($row, 0, 6),
-                new CalculateBusinessWithdrawCommission($this->moneyCalculator)
+        foreach ($row[6] as $previousOperation) {
+            $this->userBalanceStore->addAmount(
+                (int)$row[1],
+                date('d-M-Y', strtotime("Monday this week $row[0]")),
+                $previousOperation
             );
         }
 
-        if ($row[2] === Operation::PRIVATE_CLIENT) {
-            $mockCurrencyService = $this->getMockBuilder(CurrencyService::class)
-                ->setConstructorArgs(
-                    [
-                        $this->getMockBuilder(Client::class)->getMock(),
-                        $this->moneyCalculator,
-                        getenv('DEFAULT_CURRENCY')
-                    ]
-                )->onlyMethods(
-                    ['requestCurrencies']
-                )
-                ->getMock();
-            $mockCurrencyService->expects($this->any())
-                ->method('requestCurrencies')->willReturn(
-                    [
-                        'quotes' => ['USDJPY' => 129.53 / 1.1497, 'USDEUR' => 1 / 1.1497, 'USDUSD' => 1],
-                        'success' => true,
-                    ]
-                );
-
-            foreach($row[6] as $previousOperation) {
-                $this->userBalanceStore->addAmount(
-                    (int)$row[1],
-                    date('d-M-Y', strtotime("Monday this week $row[0]")),
-                    $previousOperation
-                );
-            }
-
-            return new Operation(
-                array_slice($row, 0, 6),
-                new CalculatePrivateWithdrawCommission(
-                    $this->userBalanceStore,
-                    $mockCurrencyService,
-                    $this->moneyCalculator
-                )
-            );
-        }
-
-        return null;
+        return $this->operationFactory->createOperationByTypes(array_slice($row, 0, 6));
     }
 }
