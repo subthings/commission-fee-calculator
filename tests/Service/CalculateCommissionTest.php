@@ -35,7 +35,7 @@ class CalculateCommissionTest extends TestCase
      * @param string $operationType
      * @param string $amount
      * @param string $currency
-     * @param string $userBalance
+     * @param array $userBalance
      * @param string $expectation
      */
     public function testComputeCommission(
@@ -45,7 +45,7 @@ class CalculateCommissionTest extends TestCase
         string $operationType,
         string $amount,
         string $currency,
-        string $userBalance,
+        array $userBalance,
         string $expectation
     ) {
         $this->assertEquals(
@@ -75,7 +75,7 @@ class CalculateCommissionTest extends TestCase
                 'withdraw',
                 '1200.00',
                 'EUR',
-                '0.00',
+                ['0.00'],
                 '0.60',
             ],
             'compute fee for 1000.00 EUR private withdraw at 2015-01-01' => [
@@ -85,7 +85,7 @@ class CalculateCommissionTest extends TestCase
                 'withdraw',
                 '1000.00',
                 'EUR',
-                '1200.00',
+                ['1200.00'],
                 '3.00',
             ],
             'compute fee for 1000.00 EUR private withdraw at 2016-01-05' => [
@@ -95,7 +95,7 @@ class CalculateCommissionTest extends TestCase
                 'withdraw',
                 '1000.00',
                 'EUR',
-                '0.00',
+                ['0.00'],
                 '0.00',
             ],
             'compute fee for 200.00 EUR private deposit at 2016-01-05' => [
@@ -105,7 +105,7 @@ class CalculateCommissionTest extends TestCase
                 'deposit',
                 '200',
                 'EUR',
-                '0.00',
+                ['0.00'],
                 '0.06',
             ],
             'compute fee for 200.00 EUR business withdraw 2016-01-06' => [
@@ -115,7 +115,7 @@ class CalculateCommissionTest extends TestCase
                 'withdraw',
                 '300.00',
                 'EUR',
-                '1000.00',
+                ['1000.00'],
                 '1.50',
             ],
             'compute fee for 30000 JPY private withdraw at 2016-01-06' => [
@@ -125,7 +125,7 @@ class CalculateCommissionTest extends TestCase
                 'withdraw',
                 '30000',
                 'JPY',
-                '0.00',
+                ['0.00'],
                 '0.00',
             ],
             'compute fee for 1000.00 EUR private withdraw at 2016-01-07' => [
@@ -135,7 +135,7 @@ class CalculateCommissionTest extends TestCase
                 'withdraw',
                 '1000.00',
                 'EUR',
-                '231.61',
+                ['231.61'],
                 '0.70',
             ],
             'compute fee for 100.00 USD private withdraw at 2016-01-07' => [
@@ -145,7 +145,7 @@ class CalculateCommissionTest extends TestCase
                 'withdraw',
                 '100.00',
                 'USD',
-                '1231.61',
+                ['231.61', '1000.00'],
                 '0.30',
             ],
             'compute fee for 100.00 EUR private withdraw at 2016-01-10' => [
@@ -155,7 +155,7 @@ class CalculateCommissionTest extends TestCase
                 'withdraw',
                 '100.00',
                 'EUR',
-                bcadd('86.9', '1231.61', 2),
+                ['231.61', '1000.00', '86.9'],
                 '0.30',
             ],
             'compute fee for 10000.00 EUR private deposit at 2016-01-10' => [
@@ -165,7 +165,7 @@ class CalculateCommissionTest extends TestCase
                 'deposit',
                 '10000.00',
                 'EUR',
-                '0.00',
+                ['0.00'],
                 '3.00',
             ],
             'compute fee for 1000.00 EUR private withdraw at 2016-01-10' => [
@@ -175,7 +175,7 @@ class CalculateCommissionTest extends TestCase
                 'withdraw',
                 '1000.00',
                 'EUR',
-                '0.00',
+                ['0.00'],
                 '0.00',
             ],
             'compute fee for 300.00 EUR private withdraw at 2016-02-15' => [
@@ -185,7 +185,7 @@ class CalculateCommissionTest extends TestCase
                 'withdraw',
                 '300.00',
                 'EUR',
-                '0.00',
+                ['0.00'],
                 '0.00',
             ],
             'compute fee for 3000000 JPY private withdraw at 2016-02-19' => [
@@ -195,7 +195,7 @@ class CalculateCommissionTest extends TestCase
                 'withdraw',
                 '3000000',
                 'JPY',
-                '0.00',
+                ['0.00'],
                 '8611.42',
             ],
         ];
@@ -234,11 +234,13 @@ class CalculateCommissionTest extends TestCase
                     ]
                 );
 
-            $this->userBalanceStore->addAmount(
-                (int)$row[1],
-                date('d-M-Y', strtotime("Monday this week $row[0]")),
-                $row[6]
-            );
+            foreach($row[6] as $previousOperation) {
+                $this->userBalanceStore->addAmount(
+                    (int)$row[1],
+                    date('d-M-Y', strtotime("Monday this week $row[0]")),
+                    $previousOperation
+                );
+            }
 
             return new Operation(
                 array_slice($row, 0, 6),
