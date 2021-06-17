@@ -6,7 +6,7 @@ namespace CommissionTask\Model;
 
 use CommissionTask\Service\CalculateCommission\AbstractCalculateCommission;
 
-class Operation
+abstract class Operation
 {
     public const PRIVATE_CLIENT = 'private';
     public const BUSINESS_CLIENT = 'business';
