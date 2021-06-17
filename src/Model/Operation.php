@@ -73,6 +73,6 @@ abstract class Operation
 
     public function getCommission(): string
     {
-        return $this->calculateCommission->getCommission($this->operationAmount, $this->getUserId(), $this->getDate(), $this->getOperationCurrency());
+        return $this->calculateCommission->getCommission($this->getOperationAmount(), $this->getUserId(), $this->getDate(), $this->getOperationCurrency());
     }
 }

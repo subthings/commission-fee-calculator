@@ -48,12 +48,12 @@ class CalculateCommission extends Command
                     $operation = $this->operationFactory->createOperationByTypes($row);
                     $output->writeln('<info>'.$operation->getCommission().'</info>');
                 } catch (GuzzleException $exception) {
-                    $this->logger->critical($exception->getMessage());
+                    $this->logger->critical($exception);
                     $output->writeln('<fg=#c0392b>'.$exception->getMessage().'</>');
 
                     return Command::FAILURE;
                 } catch (\JsonException $exception) {
-                    $this->logger->critical($exception->getMessage());
+                    $this->logger->critical($exception);
                     $output->writeln('<fg=#c0392b>'.$exception->getMessage().'</>');
                 } catch (\Error $error) {
                     $this->logger->error($error);
