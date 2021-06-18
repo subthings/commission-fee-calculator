@@ -43,12 +43,14 @@ class CalculateCommission extends Command
     {
         try {
             foreach ($this->rowsReader->rows($input->getArgument('file')) as $row) {
-                try {
-                    $operation = $this->operationFactory->createOperationByTypes($row);
-                    $output->writeln('<info>'.$operation->getCommission().'</info>');
-                } catch (\Error $error) {
-                    $this->logger->error($error);
-                    $output->writeln('<fg=#c0392b>'.$error->getMessage().'</>');
+                if (is_array($row)) {
+                    try {
+                        $operation = $this->operationFactory->createOperationByTypes($row);
+                        $output->writeln('<info>' . $operation->getCommission() . '</info>');
+                    } catch (\Error $error) {
+                        $this->logger->error($error);
+                        $output->writeln('<fg=#c0392b>' . $error->getMessage() . '</>');
+                    }
                 }
             }
         } catch (\Throwable $exception) {
