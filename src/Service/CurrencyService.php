@@ -71,7 +71,7 @@ class CurrencyService
                 $this->client->get(
                     getenv(
                         'CURRENCY_CONVERTER_API'
-                    )."/historical?access_key=$apiKey&date=$formattedDate&currencies=$currencyFrom,$currencyTo",
+                    )."/historical?access_key=$apiKey&date=$formattedDate",
                 )->getBody()->getContents(),
                 true,
                 512,
