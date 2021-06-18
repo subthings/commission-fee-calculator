@@ -6,7 +6,6 @@ namespace CommissionTask\Console\Command;
 
 use CommissionTask\Factory\OperationFactory;
 use CommissionTask\Service\Importers\RowsReaderInterface;
-use GuzzleHttp\Exception\GuzzleException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -47,20 +46,12 @@ class CalculateCommission extends Command
                 try {
                     $operation = $this->operationFactory->createOperationByTypes($row);
                     $output->writeln('<info>'.$operation->getCommission().'</info>');
-                } catch (GuzzleException $exception) {
-                    $this->logger->critical($exception);
-                    $output->writeln('<fg=#c0392b>'.$exception->getMessage().'</>');
-
-                    return Command::FAILURE;
-                } catch (\JsonException $exception) {
-                    $this->logger->critical($exception);
-                    $output->writeln('<fg=#c0392b>'.$exception->getMessage().'</>');
                 } catch (\Error $error) {
                     $this->logger->error($error);
                     $output->writeln('<fg=#c0392b>'.$error->getMessage().'</>');
                 }
             }
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             $this->logger->critical($exception);
             $output->writeln('<error>'.$exception->getMessage().'</error>');
 

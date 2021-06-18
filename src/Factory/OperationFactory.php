@@ -37,7 +37,9 @@ class OperationFactory
         if ($row[3] === Operation::DEPOSIT_TYPE) {
             if ($row[2] === Operation::BUSINESS_CLIENT) {
                 return new BusinessDepositOperation($row, new CalculateDepositCommission($this->moneyCalculator));
-            } elseif ($row[2] === Operation::PRIVATE_CLIENT) {
+            }
+
+            if ($row[2] === Operation::PRIVATE_CLIENT) {
                 return new PrivateDepositOperation($row, new CalculateDepositCommission($this->moneyCalculator));
             }
         }
@@ -48,7 +50,9 @@ class OperationFactory
                     $row,
                     new CalculateBusinessWithdrawCommission($this->moneyCalculator)
                 );
-            } elseif ($row[2] === Operation::PRIVATE_CLIENT) {
+            }
+
+            if ($row[2] === Operation::PRIVATE_CLIENT) {
                 return new PrivateWithdrawOperation(
                     $row,
                     new CalculatePrivateWithdrawCommission(
