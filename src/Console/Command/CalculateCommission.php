@@ -46,16 +46,16 @@ class CalculateCommission extends Command
                 if (is_array($row)) {
                     try {
                         $operation = $this->operationFactory->createOperationByTypes($row);
-                        $output->writeln('<info>' . $operation->getCommission() . '</info>');
+                        $output->writeln($operation->getCommission());
                     } catch (\Error $error) {
                         $this->logger->error($error);
-                        $output->writeln('<fg=#c0392b>' . $error->getMessage() . '</>');
+                        $output->writeln($error->getMessage());
                     }
                 }
             }
         } catch (\Throwable $exception) {
             $this->logger->critical($exception);
-            $output->writeln('<error>'.$exception->getMessage().'</error>');
+            $output->writeln($exception->getMessage());
 
             return Command::FAILURE;
         }
