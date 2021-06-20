@@ -71,8 +71,13 @@ abstract class Operation
         return $this->operationCurrency;
     }
 
+    public function getNumberOfDecimal(): int
+    {
+        return strrchr($this->getOperationAmount(), '.') ? strlen(substr(strrchr($this->getOperationAmount(), '.'), 1)) : 0;
+    }
+
     public function getCommission(): string
     {
-        return $this->calculateCommission->getCommission($this->getOperationAmount(), $this->getUserId(), $this->getDate(), $this->getOperationCurrency());
+        return $this->calculateCommission->getCommission($this->getOperationAmount(), $this->getUserId(), $this->getDate(), $this->getOperationCurrency(), $this->getNumberOfDecimal());
     }
 }

@@ -125,12 +125,12 @@ class CalculateCommissionTest extends TestCase
                 '1',
                 'private',
                 'deposit',
-                '200',
+                '200.00',
                 'EUR',
                 ['0.00'],
                 '0.06',
             ],
-            'compute fee for 200.00 EUR business withdraw 2016-01-06' => [
+            'compute fee for 300.00 EUR business withdraw 2016-01-06' => [
                 '2016-01-06',
                 '2',
                 'business',
@@ -148,7 +148,7 @@ class CalculateCommissionTest extends TestCase
                 '30000',
                 'JPY',
                 ['0.00'],
-                '0.00',
+                '0',
             ],
             'compute fee for 1000.00 EUR private withdraw at 2016-01-07' => [
                 '2016-01-07',
@@ -218,7 +218,7 @@ class CalculateCommissionTest extends TestCase
                 '3000000',
                 'JPY',
                 ['0.00'],
-                '8611.42',
+                '8612',
             ],
         ];
     }

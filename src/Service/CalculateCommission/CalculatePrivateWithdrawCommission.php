@@ -27,7 +27,7 @@ class CalculatePrivateWithdrawCommission extends AbstractCalculateCommission
         return getenv('WITHDRAW_PRIVATE_FEE');
     }
 
-    public function getCommissionChargedValue(string $amount, int $userId, \DateTime $date, string $currency): string
+    public function getCommissionChargedValue(string $amount, int $userId, \DateTime $date, string $currency, int $scale): string
     {
         $euroAmount = $this->currencyService->getDefaultFromCurrencyAmount($currency, $amount, $date);
         $mondayDate = date('d-M-Y', strtotime("Monday this week {$date->format('Y-M-d')}"));
@@ -38,17 +38,17 @@ class CalculatePrivateWithdrawCommission extends AbstractCalculateCommission
         }
 
         $operationAmount = $this->balanceStore->getAmount($userId, $mondayDate);
-        if (($remainingFreeAmount = $this->moneyCalculator->sub($operationAmount, getenv('WITHDRAW_PRIVATE_LIMIT'))) > 0) {
+        if (($amountWithoutFreeLimit = $this->moneyCalculator->sub($operationAmount, getenv('WITHDRAW_PRIVATE_LIMIT'))) > 0) {
             return min(
                 $this->currencyService->getCurrencyFromDefaultAmount(
                     $currency,
-                    $remainingFreeAmount,
+                    $amountWithoutFreeLimit,
                     $date
                 ),
                 $amount
             );
         }
 
-        return '0.00';
+        return bcsub('0', '0', $scale);
     }
 }
