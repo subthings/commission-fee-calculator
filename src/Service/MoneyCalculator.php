@@ -8,7 +8,7 @@ class MoneyCalculator
 {
     public function roundUpMul(string $multiplier1, string $multiplier2, int $scale): string
     {
-        return $this->roundUpMoney(bcmul($multiplier1, $multiplier2, $scale * 2 + 6), $scale);
+        return $this->roundUpMoney(bcmul($multiplier1, $multiplier2, 10), $scale);
     }
 
     public function roundUpDiv(string $dividend, string $divider, $scale): string
