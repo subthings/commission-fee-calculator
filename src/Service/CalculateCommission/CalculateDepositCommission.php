@@ -11,7 +11,7 @@ class CalculateDepositCommission extends AbstractCalculateCommission
         return getenv('DEPOSIT_FEE');
     }
 
-    public function getCommissionChargedValue(string $amount, int $userId, \DateTime $date, string $currency): string
+    public function getCommissionChargedValue(string $amount, int $userId, \DateTime $date, string $currency, int $scale): string
     {
         return $amount;
     }

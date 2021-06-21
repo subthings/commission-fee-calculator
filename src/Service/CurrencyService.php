@@ -24,7 +24,8 @@ class CurrencyService
         string $currencyFrom,
         string $currencyTo,
         string $amount,
-        \DateTime $date
+        \DateTime $date,
+        int $scale
     ): string {
         if ($currencyFrom === $currencyTo) {
             return $amount;
@@ -32,7 +33,7 @@ class CurrencyService
 
         $formattedDate = $date->format('Y-m-d');
         if (!isset($this->store[$formattedDate][$currencyFrom], $this->store[$formattedDate][$currencyTo])) {
-            $responseContent = $this->requestCurrencies($formattedDate, $currencyFrom, $currencyTo);
+            $responseContent = $this->requestCurrencies($formattedDate);
 
             if ($responseContent['success']) {
                 $this->store[$formattedDate][$currencyTo] = $responseContent['quotes']["USD$currencyTo"];
@@ -47,23 +48,25 @@ class CurrencyService
         return $this->moneyCalculator->roundUpMul(
             $this->moneyCalculator->roundUpDiv(
                 $amount,
-                (string) $this->store[$formattedDate][$currencyFrom]
+                (string) $this->store[$formattedDate][$currencyFrom],
+                $scale
             ),
-            (string) $this->store[$formattedDate][$currencyTo]
+            (string) $this->store[$formattedDate][$currencyTo],
+            $scale
         );
     }
 
-    public function getCurrencyFromDefaultAmount(string $currencyTo, string $amount, \DateTime $date): string
+    public function getCurrencyFromDefaultAmount(string $currencyTo, string $amount, \DateTime $date, int $scale): string
     {
-        return $this->getConvertedAmount($this->defaultCurrency, $currencyTo, $amount, $date);
+        return $this->getConvertedAmount($this->defaultCurrency, $currencyTo, $amount, $date, $scale);
     }
 
-    public function getDefaultFromCurrencyAmount(string $currencyFrom, string $amount, \DateTime $date): string
+    public function getDefaultFromCurrencyAmount(string $currencyFrom, string $amount, \DateTime $date, int $scale): string
     {
-        return $this->getConvertedAmount($currencyFrom, $this->defaultCurrency, $amount, $date);
+        return $this->getConvertedAmount($currencyFrom, $this->defaultCurrency, $amount, $date, $scale);
     }
 
-    public function requestCurrencies(string $formattedDate, string $currencyFrom, string $currencyTo): array
+    public function requestCurrencies(string $formattedDate): array
     {
         if ($apiKey = getenv('CURRENCY_CONVERTER_ACCESS_KEY')) {
             // had to add query this way didn't work in array

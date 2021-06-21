@@ -19,11 +19,13 @@ abstract class AbstractCalculateCommission
         string $amount,
         int $userId,
         \DateTime $date,
-        string $currency
+        string $currency,
+        int $scale
     ): string {
         return $this->moneyCalculator->roundUpMul(
-            $this->getCommissionChargedValue($amount, $userId, $date, $currency),
-            $this->getCommissionFeePercent()
+            $this->getCommissionChargedValue($amount, $userId, $date, $currency, $scale),
+            $this->getCommissionFeePercent(),
+            $scale
         );
     }
 
@@ -33,6 +35,7 @@ abstract class AbstractCalculateCommission
         string $amount,
         int $userId,
         \DateTime $date,
-        string $currency
+        string $currency,
+        int $scale
     ): string;
 }

@@ -11,7 +11,7 @@ class CalculateBusinessWithdrawCommission extends AbstractCalculateCommission
         return getenv('WITHDRAW_BUSINESS_FEE');
     }
 
-    public function getCommissionChargedValue(string $amount, int $userId, \DateTime $date, string $currency): string
+    public function getCommissionChargedValue(string $amount, int $userId, \DateTime $date, string $currency, int $scale): string
     {
         return $amount;
     }
