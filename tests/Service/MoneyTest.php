@@ -22,25 +22,32 @@ class MoneyTest extends TestCase
      * @dataProvider dataProviderForRoundUpCommissionTest
      *
      * @param string $number
+     * @param string $currency
      * @param string $expectation
      */
-    public function testRoundUpCommission(string $number, string $expectation)
+    public function testRoundUpCommission(string $number, string $currency, string $expectation)
     {
         $this->assertEquals(
             $expectation,
-            $this->moneyCalculator->roundUpMoney($number)
+            $this->moneyCalculator->roundUpMoney($number, $currency)
         );
     }
 
     public function dataProviderForRoundUpCommissionTest(): array
     {
         return [
-            'round up 0.023' => ['0.023', '0.03'],
-            'round up 0.0203' => ['0.0203', '0.03'],
-            'round up 0.05003' => ['0.05003', '0.06'],
-            'round up 0.0003' => ['0.0003', '0.01'],
-            'round up 0.6000' => ['0.6000', '0.60'],
-            'round up 6.6947' => ['6.6947', '6.70'],
+            'round up 0.023 EUR' => ['0.023', 'EUR', '0.03'],
+            'round up 0.0203 EUR' => ['0.0203', 'EUR', '0.03'],
+            'round up 0.05003 EUR' => ['0.05003', 'EUR', '0.06'],
+            'round up 0.0003 EUR' => ['0.0003', 'EUR', '0.01'],
+            'round up 0.6000 EUR' => ['0.6000', 'EUR', '0.60'],
+            'round up 6.6947 EUR' => ['6.6947', 'EUR', '6.70'],
+            'round up 0.023 JPY' => ['0.023', 'JPY', '1'],
+            'round up 0.0203 JPY' => ['0.0203', 'JPY', '1'],
+            'round up 0.05003 JPY' => ['0.05003', 'JPY', '1'],
+            'round up 0.0003 JPY' => ['0.0003', 'JPY', '1'],
+            'round up 0.6000 JPY' => ['0.6000', 'JPY', '1'],
+            'round up 6.6947 JPY' => ['6.6947', 'JPY', '7'],
         ];
     }
 
@@ -49,23 +56,28 @@ class MoneyTest extends TestCase
      *
      * @param string $mul1
      * @param string $mul2
+     * @param string $currency
      * @param string $expectation
      */
-    public function testRoundUpMul(string $mul1, string $mul2, string $expectation)
+    public function testRoundUpMul(string $mul1, string $mul2, string $currency, string $expectation)
     {
         $this->assertEquals(
             $expectation,
-            $this->moneyCalculator->roundUpMul($mul1, $mul2)
+            $this->moneyCalculator->roundUpMul($mul1, $mul2, $currency)
         );
     }
 
     public function dataProviderForRoundUpMulTest(): array
     {
         return [
-            'round up 0.01 * 0.01' => ['0.01', '0.01', '0.01'],
-            'round up 0.10 * 0.10' => ['0.10', '0.10', '0.01'],
-            'round up 0.36 * 0.55' => ['0.36', '0.55', '0.20'],
-            'round up 0.23 * 0.32' => ['0.23', '0.32', '0.08'],
+            'round up 0.01 * 0.01 EUR' => ['0.01', '0.01', 'EUR', '0.01'],
+            'round up 0.10 * 0.10 EUR' => ['0.10', '0.10', 'EUR', '0.01'],
+            'round up 0.36 * 0.55 EUR' => ['0.36', '0.55', 'EUR', '0.20'],
+            'round up 0.23 * 0.32 EUR' => ['0.23', '0.32', 'EUR', '0.08'],
+            'round up 0.01 * 0.01 JPY' => ['0.01', '0.01', 'JPY', '1'],
+            'round up 0.10 * 0.10 JPY' => ['0.10', '0.10', 'JPY', '1'],
+            'round up 0.36 * 0.55 JPY' => ['0.36', '0.55', 'JPY', '1'],
+            'round up 0.23 * 0.32 JPY' => ['0.23', '0.32', 'JPY', '1'],
         ];
     }
 
@@ -74,22 +86,24 @@ class MoneyTest extends TestCase
      *
      * @param string $div1
      * @param string $div2
+     * @param string $currency
      * @param string $expectation
      */
-    public function testRoundUpDiv(string $div1, string $div2, string $expectation)
+    public function testRoundUpDiv(string $div1, string $div2, string $currency, string $expectation)
     {
         $this->assertEquals(
             $expectation,
-            $this->moneyCalculator->roundUpDiv($div1, $div2)
+            $this->moneyCalculator->roundUpDiv($div1, $div2, $currency)
         );
     }
 
     public function dataProviderForRoundUpDivTest(): array
     {
         return [
-            'round up 0.01 / 0.03' => ['0.01', '0.03', '0.34'],
-            'round up 0.01 / 0.01' => ['0.01', '0.01', '1.00'],
-            'round up 100.00 / 8.00' => ['100.01', '8.00', '12.51'],
+            'round up 0.01 / 0.03 EUR' => ['0.01', '0.03', 'EUR', '0.34'],
+            'round up 0.01 / 0.01 JPY' => ['0.01', '0.01', 'JPY', '1'],
+            'round up 100.00 / 8.00 USD' => ['100.01', '8.00', 'USD', '12.51'],
+            'round up 100.00 / 8.00 JPY' => ['100.01', '8.00', 'JPY', '13'],
         ];
     }
 

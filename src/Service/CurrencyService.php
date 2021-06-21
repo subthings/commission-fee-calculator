@@ -32,7 +32,7 @@ class CurrencyService
 
         $formattedDate = $date->format('Y-m-d');
         if (!isset($this->store[$formattedDate][$currencyFrom], $this->store[$formattedDate][$currencyTo])) {
-            $responseContent = $this->requestCurrencies($formattedDate, $currencyFrom, $currencyTo);
+            $responseContent = $this->requestCurrencies($formattedDate);
 
             if ($responseContent['success']) {
                 $this->store[$formattedDate][$currencyTo] = $responseContent['quotes']["USD$currencyTo"];
@@ -47,9 +47,11 @@ class CurrencyService
         return $this->moneyCalculator->roundUpMul(
             $this->moneyCalculator->roundUpDiv(
                 $amount,
-                (string) $this->store[$formattedDate][$currencyFrom]
+                (string) $this->store[$formattedDate][$currencyFrom],
+                $currencyTo
             ),
-            (string) $this->store[$formattedDate][$currencyTo]
+            (string) $this->store[$formattedDate][$currencyTo],
+            $currencyTo
         );
     }
 
@@ -63,7 +65,7 @@ class CurrencyService
         return $this->getConvertedAmount($currencyFrom, $this->defaultCurrency, $amount, $date);
     }
 
-    public function requestCurrencies(string $formattedDate, string $currencyFrom, string $currencyTo): array
+    public function requestCurrencies(string $formattedDate): array
     {
         if ($apiKey = getenv('CURRENCY_CONVERTER_ACCESS_KEY')) {
             // had to add query this way didn't work in array

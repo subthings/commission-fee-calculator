@@ -23,7 +23,8 @@ abstract class AbstractCalculateCommission
     ): string {
         return $this->moneyCalculator->roundUpMul(
             $this->getCommissionChargedValue($amount, $userId, $date, $currency),
-            $this->getCommissionFeePercent()
+            $this->getCommissionFeePercent(),
+            $currency
         );
     }
 
