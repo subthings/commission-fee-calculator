@@ -70,14 +70,18 @@ class MoneyTest extends TestCase
     public function dataProviderForRoundUpMulTest(): array
     {
         return [
-            'round up 0.01 * 0.01 EUR' => ['0.01', '0.01', 'EUR', '0.01'],
-            'round up 0.10 * 0.10 EUR' => ['0.10', '0.10', 'EUR', '0.01'],
-            'round up 0.36 * 0.55 EUR' => ['0.36', '0.55', 'EUR', '0.20'],
-            'round up 0.23 * 0.32 EUR' => ['0.23', '0.32', 'EUR', '0.08'],
             'round up 0.01 * 0.01 JPY' => ['0.01', '0.01', 'JPY', '1'],
             'round up 0.10 * 0.10 JPY' => ['0.10', '0.10', 'JPY', '1'],
             'round up 0.36 * 0.55 JPY' => ['0.36', '0.55', 'JPY', '1'],
             'round up 0.23 * 0.32 JPY' => ['0.23', '0.32', 'JPY', '1'],
+            'round up 0.01 * 0.01 EUR' => ['0.01', '0.01', 'EUR', '0.01'],
+            'round up 0.10 * 0.10 EUR' => ['0.10', '0.10', 'EUR', '0.01'],
+            'round up 0.36 * 0.55 EUR' => ['0.36', '0.55', 'EUR', '0.20'],
+            'round up 0.23 * 0.32 EUR' => ['0.23', '0.32', 'EUR', '0.08'],
+            'round up 0.01 * 0.01 BHD' => ['0.01', '0.01', 'BHD', '0.001'],
+            'round up 0.10 * 0.10 BHD' => ['0.10', '0.10', 'BHD', '0.010'],
+            'round up 0.36 * 0.55 BHD' => ['0.36', '0.55', 'BHD', '0.198'],
+            'round up 0.23 * 0.32 BHD' => ['0.23', '0.32', 'BHD', '0.074'],
         ];
     }
 
@@ -100,10 +104,11 @@ class MoneyTest extends TestCase
     public function dataProviderForRoundUpDivTest(): array
     {
         return [
-            'round up 0.01 / 0.03 EUR' => ['0.01', '0.03', 'EUR', '0.34'],
             'round up 0.01 / 0.01 JPY' => ['0.01', '0.01', 'JPY', '1'],
-            'round up 100.00 / 8.00 USD' => ['100.01', '8.00', 'USD', '12.51'],
             'round up 100.00 / 8.00 JPY' => ['100.01', '8.00', 'JPY', '13'],
+            'round up 0.01 / 0.03 EUR' => ['0.01', '0.03', 'EUR', '0.34'],
+            'round up 100.00 / 8.00 USD' => ['100.01', '8.00', 'USD', '12.51'],
+            'round up 100.00 / 8.00 BHD' => ['100.01', '8.00', 'BHD', '12.502'],
         ];
     }
 
