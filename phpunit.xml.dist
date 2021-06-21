@@ -30,5 +30,7 @@
         <env name="WITHDRAW_BUSINESS_FEE" value="0.005"/>
         <env name="WITHDRAW_PRIVATE_LIMIT" value="1000"/>
         <env name="WITHDRAW_PRIVATE_FREE_OPERATIONS" value="3"/>
+        <env name="MAX_CURRENCY_DECIMAL" value="3"/>
+        <env name="MAX_SCALE" value="10"/>
     </php>
 </phpunit>

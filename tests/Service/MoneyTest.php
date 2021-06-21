@@ -125,9 +125,9 @@ class MoneyTest extends TestCase
     public function dataProviderForRoundAddTest(): array
     {
         return [
-            'round up 0.01 + 0.03' => ['0.01', '0.03', '0.04'],
-            'round up 0.01 + 0.01' => ['0.01', '0.01', '0.02'],
-            'round up 0.001 + 0.00' => ['0.001', '0.00', '0.00'],
+            'round up 0.010 + 0.03' => ['0.010', '0.03', '0.040'],
+            'round up 0.011 + 0.01' => ['0.011', '0.01', '0.021'],
+            'round up 0.001 + 0.001' => ['0.001', '0.00', '0.001'],
         ];
     }
 
@@ -149,9 +149,9 @@ class MoneyTest extends TestCase
     public function dataProviderForRoundSubTest(): array
     {
         return [
-            'round up 0.03 - 0.01' => ['0.03', '0.01', '0.02'],
-            'round up 0.01 - 0.01' => ['0.01', '0.01', '0.00'],
-            'round up 0.001 - 0.00' => ['0.001', '0.00', '0.00'],
+            'round up 0.031 - 0.01' => ['0.031', '0.01', '0.021'],
+            'round up 0.01 - 0.01' => ['0.01', '0.01', '0.000'],
+            'round up 0.001 - 0.00' => ['0.001', '0.00', '0.001'],
         ];
     }
 }
