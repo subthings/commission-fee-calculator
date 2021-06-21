@@ -29,7 +29,7 @@ class CalculatePrivateWithdrawCommission extends AbstractCalculateCommission
 
     public function getCommissionChargedValue(string $amount, int $userId, \DateTime $date, string $currency, int $scale): string
     {
-        $euroAmount = $this->currencyService->getDefaultFromCurrencyAmount($currency, $amount, $date);
+        $euroAmount = $this->currencyService->getDefaultFromCurrencyAmount($currency, $amount, $date, $scale);
         $mondayDate = date('d-M-Y', strtotime("Monday this week {$date->format('Y-M-d')}"));
         $this->balanceStore->addAmount($userId, $mondayDate, $euroAmount);
 
@@ -43,7 +43,8 @@ class CalculatePrivateWithdrawCommission extends AbstractCalculateCommission
                 $this->currencyService->getCurrencyFromDefaultAmount(
                     $currency,
                     $amountWithoutFreeLimit,
-                    $date
+                    $date,
+                    $scale
                 ),
                 $amount
             );

@@ -24,7 +24,8 @@ class CurrencyService
         string $currencyFrom,
         string $currencyTo,
         string $amount,
-        \DateTime $date
+        \DateTime $date,
+        int $scale
     ): string {
         if ($currencyFrom === $currencyTo) {
             return $amount;
@@ -44,17 +45,25 @@ class CurrencyService
             }
         }
 
-        return (string) (((int) $amount / $this->store[$formattedDate][$currencyFrom]) * $this->store[$formattedDate][$currencyTo]);
+        return $this->moneyCalculator->roundUpMul(
+            $this->moneyCalculator->roundUpDiv(
+                $amount,
+                (string) $this->store[$formattedDate][$currencyFrom],
+                $scale
+            ),
+            (string) $this->store[$formattedDate][$currencyTo],
+            $scale
+        );
     }
 
-    public function getCurrencyFromDefaultAmount(string $currencyTo, string $amount, \DateTime $date): string
+    public function getCurrencyFromDefaultAmount(string $currencyTo, string $amount, \DateTime $date, int $scale): string
     {
-        return $this->getConvertedAmount($this->defaultCurrency, $currencyTo, $amount, $date);
+        return $this->getConvertedAmount($this->defaultCurrency, $currencyTo, $amount, $date, $scale);
     }
 
-    public function getDefaultFromCurrencyAmount(string $currencyFrom, string $amount, \DateTime $date): string
+    public function getDefaultFromCurrencyAmount(string $currencyFrom, string $amount, \DateTime $date, int $scale): string
     {
-        return $this->getConvertedAmount($currencyFrom, $this->defaultCurrency, $amount, $date);
+        return $this->getConvertedAmount($currencyFrom, $this->defaultCurrency, $amount, $date, $scale);
     }
 
     public function requestCurrencies(string $formattedDate): array
