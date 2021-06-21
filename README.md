@@ -16,7 +16,7 @@ Pay attention that input.csv should have following structure (and any name):
 2) user's identificator, number
 3) user's type, one of private or business
 4) operation type, one of deposit or withdraw
-5) operation amount (for example 2.12 or 3)
+5) operation amount (for example 2.12 or 3), the app will rely on given in input currency format
 6) operation currency, one of EUR, USD, JPY
 
 # To run tests
