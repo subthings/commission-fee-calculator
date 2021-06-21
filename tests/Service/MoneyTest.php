@@ -90,25 +90,22 @@ class MoneyTest extends TestCase
      *
      * @param string $div1
      * @param string $div2
-     * @param string $currency
      * @param string $expectation
      */
-    public function testRoundUpDiv(string $div1, string $div2, string $currency, string $expectation)
+    public function testRoundUpDiv(string $div1, string $div2, string $expectation)
     {
         $this->assertEquals(
             $expectation,
-            $this->moneyCalculator->roundUpDiv($div1, $div2, $currency)
+            $this->moneyCalculator->roundDiv($div1, $div2)
         );
     }
 
     public function dataProviderForRoundUpDivTest(): array
     {
         return [
-            'round up 0.01 / 0.01 JPY' => ['0.01', '0.01', 'JPY', '1'],
-            'round up 100.00 / 8.00 JPY' => ['100.01', '8.00', 'JPY', '13'],
-            'round up 0.01 / 0.03 EUR' => ['0.01', '0.03', 'EUR', '0.34'],
-            'round up 100.00 / 8.00 USD' => ['100.01', '8.00', 'USD', '12.51'],
-            'round up 100.00 / 8.00 BHD' => ['100.01', '8.00', 'BHD', '12.502'],
+            'round up 0.01 / 0.01 JPY' => ['0.01', '0.01', '1.0000000000'],
+            'round up 0.01 / 0.03 EUR' => ['0.01', '0.03', '0.3333333333'],
+            'round up 100.00 / 8.00 USD' => ['100.01', '8.00', '12.5012500000'],
         ];
     }
 

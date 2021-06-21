@@ -35,8 +35,8 @@ class CurrencyService
             $responseContent = $this->requestCurrencies($formattedDate);
 
             if ($responseContent['success']) {
-                $this->store[$formattedDate][$currencyTo] = $responseContent['quotes']["USD$currencyTo"];
-                $this->store[$formattedDate][$currencyFrom] = $responseContent['quotes']["USD$currencyFrom"];
+                $this->store[$formattedDate][$currencyTo] = (string) $responseContent['quotes']["USD$currencyTo"];
+                $this->store[$formattedDate][$currencyFrom] = (string) $responseContent['quotes']["USD$currencyFrom"];
             } elseif ($responseContent['error'] && $responseContent['error']['info']) {
                 throw new \Exception("Problem with api: {$responseContent['error']['info']}");
             } else {
@@ -45,12 +45,11 @@ class CurrencyService
         }
 
         return $this->moneyCalculator->roundUpMul(
-            $this->moneyCalculator->roundUpDiv(
+            $this->moneyCalculator->roundDiv(
                 $amount,
-                (string) $this->store[$formattedDate][$currencyFrom],
-                $currencyTo
+                $this->store[$formattedDate][$currencyFrom]
             ),
-            (string) $this->store[$formattedDate][$currencyTo],
+            $this->store[$formattedDate][$currencyTo],
             $currencyTo
         );
     }

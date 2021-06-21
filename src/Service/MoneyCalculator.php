@@ -13,9 +13,9 @@ class MoneyCalculator
         return $this->roundUpMoney(bcmul($multiplier1, $multiplier2, (int) getenv('MAX_CURRENCY_DECIMAL') * 2), $currency);
     }
 
-    public function roundUpDiv(string $dividend, string $divider, string $currency): string
+    public function roundDiv(string $dividend, string $divider): string
     {
-        return $this->roundUpMoney(bcdiv($dividend, $divider, (int) getenv('MAX_SCALE')), $currency);
+        return bcdiv($dividend, $divider, (int) getenv('MAX_SCALE'));
     }
 
     public function sub($minuend, $subtrahend): string
