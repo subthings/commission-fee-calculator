@@ -8,16 +8,11 @@ use GuzzleHttp\Client;
 
 class CurrencyService
 {
-    private Client $client;
-    private MoneyCalculator $moneyCalculator;
-    private string $defaultCurrency;
-    private array $store = [];
-
-    public function __construct(Client $client, MoneyCalculator $moneyCalculator, string $defaultCurrency)
-    {
-        $this->client = $client;
-        $this->moneyCalculator = $moneyCalculator;
-        $this->defaultCurrency = $defaultCurrency;
+    public function __construct(
+        private Client $client,
+        private MoneyCalculator $moneyCalculator,
+        private string $defaultCurrency
+    ) {
     }
 
     public function getConvertedAmount(

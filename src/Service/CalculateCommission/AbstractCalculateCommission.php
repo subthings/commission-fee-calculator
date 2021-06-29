@@ -8,11 +8,8 @@ use CommissionTask\Service\MoneyCalculator;
 
 abstract class AbstractCalculateCommission
 {
-    private MoneyCalculator $moneyCalculator;
-
-    public function __construct(MoneyCalculator $moneyCalculator)
+    public function __construct(private MoneyCalculator $moneyCalculator)
     {
-        $this->moneyCalculator = $moneyCalculator;
     }
 
     final public function getCommission(

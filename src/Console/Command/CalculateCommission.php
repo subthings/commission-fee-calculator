@@ -16,19 +16,12 @@ class CalculateCommission extends Command
 {
     protected static $defaultName = 'commission:calculate';
 
-    private RowsReaderInterface $rowsReader;
-    private LoggerInterface $logger;
-    private OperationFactory $operationFactory;
-
     public function __construct(
-        RowsReaderInterface $rowsReader,
-        LoggerInterface $logger,
-        OperationFactory $operationFactory
+        private RowsReaderInterface $rowsReader,
+        private LoggerInterface $logger,
+        private OperationFactory $operationFactory
     ) {
         parent::__construct();
-        $this->rowsReader = $rowsReader;
-        $this->logger = $logger;
-        $this->operationFactory = $operationFactory;
     }
 
     protected function configure(): void

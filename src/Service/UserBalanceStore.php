@@ -6,12 +6,10 @@ namespace CommissionTask\Service;
 
 class UserBalanceStore
 {
-    private MoneyCalculator $moneyCalculator;
     private array $store = [];
 
-    public function __construct(MoneyCalculator $moneyCalculator)
+    public function __construct(private MoneyCalculator $moneyCalculator)
     {
-        $this->moneyCalculator = $moneyCalculator;
     }
 
     public function addAmount(int $userId, string $mondayDate, string $euroAmount): void

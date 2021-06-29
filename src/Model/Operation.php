@@ -28,9 +28,8 @@ abstract class Operation
     private int $operationType;
     private string $operationAmount;
     private string $operationCurrency;
-    private AbstractCalculateCommission $calculateCommission;
 
-    public function __construct(array $operationRow, AbstractCalculateCommission $calculateCommission)
+    public function __construct(array $operationRow, private AbstractCalculateCommission $calculateCommission)
     {
         $this->date = new \DateTime($operationRow[0]);
         $this->userId = (int) $operationRow[1];
@@ -38,7 +37,6 @@ abstract class Operation
         $this->operationType = self::OPERATION_TYPES[$operationRow[3]];
         $this->operationAmount = $operationRow[4];
         $this->operationCurrency = $operationRow[5];
-        $this->calculateCommission = $calculateCommission;
     }
 
     public function getDate(): \DateTime

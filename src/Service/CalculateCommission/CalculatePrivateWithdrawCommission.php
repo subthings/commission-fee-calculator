@@ -10,16 +10,12 @@ use CommissionTask\Service\UserBalanceStore;
 
 class CalculatePrivateWithdrawCommission extends AbstractCalculateCommission
 {
-    private UserBalanceStore $balanceStore;
-    private CurrencyService $currencyService;
-    private MoneyCalculator $moneyCalculator;
-
-    public function __construct(UserBalanceStore $balanceStore, CurrencyService $currencyService, MoneyCalculator $moneyCalculator)
-    {
+    public function __construct(
+        private UserBalanceStore $balanceStore,
+        private CurrencyService $currencyService,
+        private MoneyCalculator $moneyCalculator
+    ) {
         parent::__construct($moneyCalculator);
-        $this->currencyService = $currencyService;
-        $this->balanceStore = $balanceStore;
-        $this->moneyCalculator = $moneyCalculator;
     }
 
     public function getCommissionFeePercent(): string
